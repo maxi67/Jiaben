@@ -214,11 +214,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
         btn_count_$change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
         });
+
     }
 }
