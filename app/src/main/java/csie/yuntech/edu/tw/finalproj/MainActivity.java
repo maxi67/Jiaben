@@ -214,6 +214,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        //XD
+
+        btn_count_$change.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
     }
 }
