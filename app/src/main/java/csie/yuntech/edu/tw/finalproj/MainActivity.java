@@ -7,11 +7,13 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -104,25 +106,30 @@ public class MainActivity extends AppCompatActivity {
         tabHost = (TabHost)findViewById(R.id.tabhost);
         tabHost.setup();
 
-        TabHost.TabSpec spec = tabHost.newTabSpec("tag1");
-        spec.setContent(R.id.tab1);
-        spec.setIndicator("支出");
-        tabHost.addTab(spec);
+        addTabHost("tag1", "支出", R.drawable.out, R.id.tab1);
+        addTabHost("tag2", "查詢", R.drawable.find, R.id.tab2);
+        addTabHost("tag3", "統計", R.drawable.count, R.id.tab3);
+        addTabHost("tag4", "吃啥", R.drawable.eatwhat, R.id.tab4);
 
-        spec = tabHost.newTabSpec("tag2");
-        spec.setContent(R.id.tab2);
-        spec.setIndicator("餐點查詢");
-        tabHost.addTab(spec);
-
-        spec = tabHost.newTabSpec("tag3");
-        spec.setContent(R.id.tab3);
-        spec.setIndicator("開銷統計");
-        tabHost.addTab(spec);
-
-        spec = tabHost.newTabSpec("tag4");
-        spec.setContent(R.id.tab4);
-        spec.setIndicator("問問神奇海螺");
-        tabHost.addTab(spec);
+//        TabHost.TabSpec spec = tabHost.newTabSpec("tag1");
+//        spec.setContent(R.id.tab1);
+//        spec.setIndicator("支出");
+//        tabHost.addTab(spec);
+//
+//        spec = tabHost.newTabSpec("tag2");
+//        spec.setContent(R.id.tab2);
+//        spec.setIndicator("餐點查詢");
+//        tabHost.addTab(spec);
+//
+//        spec = tabHost.newTabSpec("tag3");
+//        spec.setContent(R.id.tab3);
+//        spec.setIndicator("開銷統計");
+//        tabHost.addTab(spec);
+//
+//        spec = tabHost.newTabSpec("tag4");
+//        spec.setContent(R.id.tab4);
+//        spec.setIndicator("問問神奇海螺");
+//        tabHost.addTab(spec);
         //==================================
 
         //種類(kind)=========spinner===============================
@@ -147,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
                 input_date = year + "/" + (monthOfYear + 1) + "/" + dayOfMonth;
+                btn_record_date.setText(input_date);
             }
         };
         //=============================================================
@@ -165,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "品項名稱不得為空", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                //檢查資料(防止空值)
                 if(input_cost.length() == 0){
                     Toast.makeText(MainActivity.this, "金額不得為空", Toast.LENGTH_SHORT).show();
                     return;
@@ -223,4 +232,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    public void addTabHost(String label, String title, int iconId, int contentId){
+        View tab = LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+        ImageView image = (ImageView) tab.findViewById(R.id.icon);
+        TextView text = (TextView) tab.findViewById(R.id.text);
+        text.setText(title);
+        image.setImageResource(iconId);
+        TabHost.TabSpec spec = tabHost.newTabSpec(label).setIndicator(tab).setContent(contentId);
+        tabHost.addTab(spec);
+    }
+
 }

@@ -4,10 +4,6 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="csie.yuntech.edu.tw.finalproj.MainActivity">
 
     <TabHost
@@ -26,6 +22,42 @@
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/tab2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="餐點關鍵字"
+                        android:textSize="24sp"/>
+                    <EditText
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:id="@+id/search_name"/>
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/search_go"
+                        android:text="查詢"
+                        android:textSize="18sp"/>
+                    <LinearLayout
+                        android:id="@+id/list_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                    </LinearLayout>
+                    <ListView
+                        android:id="@+id/search_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    </ListView>
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/tab3"
@@ -141,7 +173,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="今天吃什麼？問問神奇海螺吧！"
-                        android:textSize="24sp"
+                        android:textSize="20sp"
                         android:paddingTop="10dp"
                         android:paddingBottom="20dp"/>
 
@@ -212,6 +244,7 @@
                         android:layout_width="200dp"
                         android:layout_height="wrap_content"
                         android:inputType="number"
+                        android:digits="0123456789"
                         android:layout_gravity="center" />
 
                     <Button
@@ -222,42 +255,6 @@
                         android:text="儲存"
                         android:textSize="18sp" />
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tab2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:text="餐點關鍵字"
-                        android:textSize="24sp"/>
-                    <EditText
-                        android:layout_width="200dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:id="@+id/search_name"/>
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/search_go"
-                        android:text="查詢"
-                        android:textSize="18sp"/>
-                    <LinearLayout
-                        android:id="@+id/list_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                    </LinearLayout>
-                    <ListView
-                        android:id="@+id/search_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                    </ListView>
                 </LinearLayout>
             </FrameLayout>
         </LinearLayout>

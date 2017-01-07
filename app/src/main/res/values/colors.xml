@@ -3,4 +3,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <drawable name="white">#ffffff</drawable>
+    <drawable name="black">#000000</drawable>
+    <drawable name="gray">#77777777</drawable>
+    <drawable name="purple">#775599</drawable>
+    <drawable name="lightBlue">#ff6699ff</drawable>
+    <drawable name="lightGray">#d3d3d3</drawable>
+    <drawable name="lightYellow">#ffffa5</drawable>
+
 </resources>
