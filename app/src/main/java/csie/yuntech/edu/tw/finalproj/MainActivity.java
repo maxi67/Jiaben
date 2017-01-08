@@ -44,6 +44,10 @@ public class MainActivity extends AppCompatActivity {
 
     //Variables
     private String input_date = ""; // YYYY/MM/DD
+    private String monthKeyword = "";
+//    private String[] monthCount = {"date LIKE '2017/01%'", "date LIKE '2017/02%'", "date LIKE '2017/03%'", "date LIKE '2017/04%'",
+//            "date LIKE '2017/05%'", "date LIKE '2017/02%'", "date LIKE '2017/03%'", "date LIKE '2017/04%'",
+//            "date LIKE '2017/01%'", "date LIKE '2017/02%'", "date LIKE '2017/03%'", "date LIKE '2017/04%'"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +56,9 @@ public class MainActivity extends AppCompatActivity {
 
         _helper = DBHelper.getInstance(this); //資料庫物件初始化
         myCalendar = Calendar.getInstance();  //取得手機當前日期
-
+        Item.CURRENT_YEAR = myCalendar.get(Calendar.YEAR);
+        Item.CURRENT_MONTH = myCalendar.get(Calendar.MONTH);
+        monthKeyword = String.format("date LIKE '%04d/%02d%%'", Item.CURRENT_YEAR, Item.CURRENT_MONTH + 1);
         //=============tabHost===================
         tabHost = (TabHost)findViewById(R.id.tabhost);
         tabHost.setup();
@@ -100,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         txv_count_daysLeft.setText(daysLeft);
 
         if(Item.firstTime) { //初次使用App
+            Item.firstTime = false;
             final View item = LayoutInflater.from(this).inflate(R.layout.item_view_input, null);
             new AlertDialog.Builder(this)
                     .setTitle(R.string.welcometoApp)
@@ -120,11 +127,15 @@ public class MainActivity extends AppCompatActivity {
                     .show();
             reloadCount();
         }
-
         else {
             //如果進到下個月，重新詢問預算
             int getMonth = myCalendar.get(Calendar.MONTH);
             if (getMonth != Item.CURRENT_MONTH) {
+
+                if(getMonth == 0) //進入新的一年
+                {
+                    Item.CURRENT_YEAR = myCalendar.get(Calendar.YEAR);
+                }
                 final View item = LayoutInflater.from(this).inflate(R.layout.item_view_input, null);
                 new AlertDialog.Builder(this)
                         .setTitle("請輸入本月預算")
@@ -143,6 +154,8 @@ public class MainActivity extends AppCompatActivity {
                         })
                         .show();
                 reloadCount();
+                Item.CURRENT_MONTH = myCalendar.get(Calendar.MONTH);
+                monthKeyword = String.format("date LIKE '%04d/%02d%%'", Item.CURRENT_YEAR, Item.CURRENT_MONTH + 1);
             }
         }
     }
@@ -366,7 +379,8 @@ public class MainActivity extends AppCompatActivity {
         Cursor c2 = _helper.getReadableDatabase()
                 .query(Item.DATABASE_TABLE, //table
                         new String[] {"cost"}, //columns
-                        "date LIKE '2017/1%'", //WHERE
+                 //       "date LIKE '2017/01%'", //WHERE
+                        monthKeyword, //WHERE
                         null, null, null, null); //selectionArgs, groupBy, having, orderBy
         if (c2 != null)
             c2.moveToFirst();	//將指標移到第一筆資料
