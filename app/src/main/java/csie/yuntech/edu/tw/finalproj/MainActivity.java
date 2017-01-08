@@ -3,6 +3,7 @@ package csie.yuntech.edu.tw.finalproj;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -227,7 +228,16 @@ public class MainActivity extends AppCompatActivity {
         btn_count_$change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                final View budget = LayoutInflater.from(MainActivity.this).inflate(R.layout.budget_change, null);
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("修改預算")
+                        .setView(budget)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                EditText edt_budget = (EditText)findViewById(R.id.edt_budget);
+                            }
+                        }).show();
             }
         });
 
