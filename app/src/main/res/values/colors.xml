@@ -6,9 +6,10 @@
 
     <drawable name="white">#ffffff</drawable>
     <drawable name="black">#000000</drawable>
-    <drawable name="gray">#77777777</drawable>
+    <drawable name="gray">#777777</drawable>
     <drawable name="purple">#775599</drawable>
-    <drawable name="lightBlue">#ff6699ff</drawable>
+    <drawable name="blue">#3355bb</drawable>
+    <drawable name="lightBlue">#6699ff</drawable>
     <drawable name="lightGray">#d3d3d3</drawable>
     <drawable name="lightYellow">#ffffa5</drawable>
 

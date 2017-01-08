@@ -13,7 +13,7 @@
         <TextView
             android:id="@+id/item_name"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30sp"
             android:textSize="15sp"
             android:gravity="center"
             android:background="#55ffff22"
@@ -21,7 +21,7 @@
         <TextView
             android:id="@+id/item_date"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30sp"
             android:textSize="15sp"
             android:gravity="center"
             android:background="#55bbff44"
@@ -29,7 +29,7 @@
         <TextView
             android:id="@+id/item_kind"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30sp"
             android:textSize="15sp"
             android:gravity="center"
             android:background="#5577ff66"
@@ -37,7 +37,7 @@
         <TextView
             android:id="@+id/item_cost"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30sp"
             android:textSize="15sp"
             android:gravity="center"
             android:background="#5533ff88"
