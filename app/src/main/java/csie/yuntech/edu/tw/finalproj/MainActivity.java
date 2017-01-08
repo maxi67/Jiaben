@@ -39,12 +39,11 @@ public class MainActivity extends AppCompatActivity {
     Spinner record_spinner;
     ListView search_list;
     TextView txv_count_sum, txv_count_daysLeft, txv_count_$left, txv_count_word;
-    private Cursor c, c2;
+    private Cursor c;
     private SimpleCursorAdapter adapter;
 
     //Variables
     private String input_date = ""; // YYYY/MM/DD
-  //  static int $sum = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         addTabHost("tag3", "統計", R.drawable.count, R.id.tab3);
         initializeTab3();
         addTabHost("tag4", "吃啥", R.drawable.eatwhat, R.id.tab4);
+        initializeTab4();
         //==================================
 
 
@@ -99,21 +99,18 @@ public class MainActivity extends AppCompatActivity {
         String daysLeft = Integer.toString(myCalendar.getActualMaximum(Calendar.DAY_OF_MONTH) - myCalendar.get(Calendar.DAY_OF_MONTH));
         txv_count_daysLeft.setText(daysLeft);
 
-        //如果進到下個月，重新詢問預算
-        int getMonth = myCalendar.get(Calendar.MONTH);
-        if(getMonth != Item.CURRENT_MONTH)
-        {
+        if(Item.firstTime) { //初次使用App
             final View item = LayoutInflater.from(this).inflate(R.layout.item_view_input, null);
             new AlertDialog.Builder(this)
-                    .setTitle("請輸入本月預算")
+                    .setTitle(R.string.welcometoApp)
+                    .setMessage("我們會進行每月的預算控管，請先輸入本月預算")
                     .setView(item)
                     .setNegativeButton("Cancel", null)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             EditText editText = (EditText) item.findViewById(R.id.editText);
-                            if (editText.getText().toString().length() == 0)
-                            {
+                            if (editText.getText().toString().length() == 0) {
                                 editText.setError("不能為空");
                                 return;
                             }
@@ -122,6 +119,31 @@ public class MainActivity extends AppCompatActivity {
                     })
                     .show();
             reloadCount();
+        }
+
+        else {
+            //如果進到下個月，重新詢問預算
+            int getMonth = myCalendar.get(Calendar.MONTH);
+            if (getMonth != Item.CURRENT_MONTH) {
+                final View item = LayoutInflater.from(this).inflate(R.layout.item_view_input, null);
+                new AlertDialog.Builder(this)
+                        .setTitle("請輸入本月預算")
+                        .setView(item)
+                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                EditText editText = (EditText) item.findViewById(R.id.editText);
+                                if (editText.getText().toString().length() == 0) {
+                                    editText.setError("不能為空");
+                                    return;
+                                }
+                                Item.MONTH_BUDGET = editText.getText().toString();
+                            }
+                        })
+                        .show();
+                reloadCount();
+            }
         }
     }
 
@@ -274,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 //Update listView
                                 c = _helper.getReadableDatabase()
-                                        .query(Item.DATABASE_TABLE, null, null, null, null, null, null);
+                                        .query(Item.DATABASE_TABLE, null, null, null, null, null, "date");
                                 adapter.changeCursor(c);
                             }
                         })
@@ -322,6 +344,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void initializeTab4() {
+        //元件宣告
+        LinearLayout content_view = (LinearLayout) findViewById(R.id.tab4);
+        getLayoutInflater().inflate(R.layout.tab4_content, content_view, true);
+    }
+
     //TabHost標籤建立(標籤名/標籤顯示文字/顯示圖片ID/標籤畫面ID)
     public void addTabHost(String label, String title, int iconId, int contentId){
         View tab = LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
@@ -335,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void reloadCount(){
         txv_count_sum.setText(Item.MONTH_BUDGET);
-        c2 = _helper.getReadableDatabase()
+        Cursor c2 = _helper.getReadableDatabase()
                 .query(Item.DATABASE_TABLE, //table
                         new String[] {"cost"}, //columns
                         "date LIKE '2017/1%'", //WHERE
@@ -351,5 +379,6 @@ public class MainActivity extends AppCompatActivity {
         }
         sum = Integer.valueOf(Item.MONTH_BUDGET) - sum;
         txv_count_$left.setText(sum+"");
+        c2.close();
     }
 }

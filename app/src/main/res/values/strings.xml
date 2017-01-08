@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Finalproj</string>
+    <string name="app_name">Eating King</string>
     <string-array name = "food">
         <item>早餐</item>
         <item>午餐</item>
@@ -7,4 +7,5 @@
         <item>點心</item>
         <item>宵夜</item>
     </string-array>
+    <string name="welcometoApp">welcome to Eating King</string>
 </resources>

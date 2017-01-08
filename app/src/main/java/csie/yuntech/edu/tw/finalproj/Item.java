@@ -16,7 +16,8 @@ public class Item {
     public static final String KEY_KIND = "kind"; //類型
     public static final String KEY_COST = "cost"; //金額
 
-    public static int CURRENT_MONTH = 0;
-    public static String MONTH_BUDGET = "2000";
+    public static boolean firstTime = true;
+    public static int CURRENT_MONTH = 0; //當月(0 ~ 11)
+    public static String MONTH_BUDGET = "2000"; //預設預算
 
 }
