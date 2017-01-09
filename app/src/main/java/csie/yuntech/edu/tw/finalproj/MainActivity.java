@@ -45,11 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
     //Variables
     private String input_date = ""; // YYYY/MM/DD
-    private String monthKeyword = "";
+    private String monthKeyword = ""; //紀錄當前的年/月(用來計算預算額度)
     private String ss;
-//    private String[] monthCount = {"date LIKE '2017/01%'", "date LIKE '2017/02%'", "date LIKE '2017/03%'", "date LIKE '2017/04%'",
-//            "date LIKE '2017/05%'", "date LIKE '2017/02%'", "date LIKE '2017/03%'", "date LIKE '2017/04%'",
-//            "date LIKE '2017/01%'", "date LIKE '2017/02%'", "date LIKE '2017/03%'", "date LIKE '2017/04%'"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,28 +72,6 @@ public class MainActivity extends AppCompatActivity {
         initializeTab4();
         //==================================
 
-
-        //====================預算==========================================
-//        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
-//            @Override
-//            public void onTabChanged(String s) {
-//                switch (s.charAt(3)){
-//                    case '2':
-//                        //從資料庫抓清單
-//                        c = _helper.getReadableDatabase()
-//                                .query(Item.DATABASE_TABLE, null, null, null, null, null, "date");
-//                        adapter = new SimpleCursorAdapter(MainActivity.this,
-//                                R.layout.list_style, c,
-//                                new String[]{"name", "date", "kind", "cost"},
-//                                new int[]{R.id.item_name, R.id.item_date, R.id.item_kind, R.id.item_cost}, 1);
-//                        adapter.changeCursor(c);
-//                        break;
-//                    case '3':
-//                        reloadCount();
-//                        break;
-//                }
-//            }
-//        });
     }
 
     @Override
@@ -123,11 +98,12 @@ public class MainActivity extends AppCompatActivity {
                                 editText.setError("不能為空");
                                 return;
                             }
-                            Item.MONTH_BUDGET = editText.getText().toString();
+                            reloadCount(editText.getText().toString());
+                            Toast.makeText(MainActivity.this, "YES", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .show();
-            reloadCount();
+
         }
         else {
             //如果進到下個月，重新詢問預算
@@ -152,13 +128,15 @@ public class MainActivity extends AppCompatActivity {
                                     return;
                                 }
                                 Item.MONTH_BUDGET = editText.getText().toString();
+                                reloadCount(editText.getText().toString());
+                                Item.CURRENT_MONTH = myCalendar.get(Calendar.MONTH);
+                                monthKeyword = String.format("date LIKE '%04d/%02d%%'", Item.CURRENT_YEAR, Item.CURRENT_MONTH + 1);
                             }
                         })
                         .show();
-                reloadCount();
-                Item.CURRENT_MONTH = myCalendar.get(Calendar.MONTH);
-                monthKeyword = String.format("date LIKE '%04d/%02d%%'", Item.CURRENT_YEAR, Item.CURRENT_MONTH + 1);
             }
+            else
+                reloadCount(Item.MONTH_BUDGET);
         }
     }
 
@@ -332,7 +310,6 @@ public class MainActivity extends AppCompatActivity {
         txv_count_daysLeft = (TextView)content_view.findViewById(R.id.count_daysLeft);
         txv_count_word = (TextView)content_view.findViewById(R.id.count_word);
 
-        reloadCount();
         btn_count_$change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -350,8 +327,7 @@ public class MainActivity extends AppCompatActivity {
                                     editText.setError("不能為空");
                                     return;
                                 }
-                                Item.MONTH_BUDGET = editText.getText().toString();
-                                reloadCount();
+                                reloadCount(editText.getText().toString());
                             }
                         })
                         .show();
@@ -366,12 +342,14 @@ public class MainActivity extends AppCompatActivity {
         ask_spinner = (Spinner)content_view.findViewById(R.id.ask_spinner);  //(kind)
         ask_txv_eat = (TextView)content_view.findViewById(R.id.txv_eat);
         ImageButton ask_shell = (ImageButton)content_view.findViewById(R.id.img_btn_shell);
+
         //下拉式選單[種類(kind)]=========Spinner===============================
-        final ArrayAdapter<CharSequence> foodList = ArrayAdapter.createFromResource(MainActivity.this,
+        ArrayAdapter<CharSequence> foodList = ArrayAdapter.createFromResource(MainActivity.this,
                 R.array.food,
                 android.R.layout.simple_spinner_dropdown_item);
         ask_spinner.setAdapter(foodList);
         //==============================
+
         //================spinner==========================
         ask_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -420,25 +398,26 @@ public class MainActivity extends AppCompatActivity {
         tabHost.addTab(spec);
     }
 
-    public void reloadCount(){
-        txv_count_sum.setText(Item.MONTH_BUDGET);
-        Cursor c2 = _helper.getReadableDatabase()
+    //更新預算頁面(本月預算、剩餘額度)
+    public void reloadCount(String newBudget){
+        Item.MONTH_BUDGET = newBudget;
+        txv_count_sum.setText(newBudget);
+        Cursor c3 = _helper.getReadableDatabase()
                 .query(Item.DATABASE_TABLE, //table
                         new String[] {"cost"}, //columns
-                 //       "date LIKE '2017/01%'", //WHERE
                         monthKeyword, //WHERE
                         null, null, null, null); //selectionArgs, groupBy, having, orderBy
-        if (c2 != null)
-            c2.moveToFirst();	//將指標移到第一筆資料
+        if (c3 != null)
+            c3.moveToFirst();	//將指標移到第一筆資料
 
         int sum = 0;
-        for(int i = 0; i < c2.getCount(); i++)
+        for(int i = 0; i < c3.getCount(); i++)
         {
-            sum += c2.getInt(0);
-            c2.moveToNext();
+            sum += c3.getInt(0);
+            c3.moveToNext();
         }
-        sum = Integer.valueOf(Item.MONTH_BUDGET) - sum;
+        sum = Integer.valueOf(newBudget) - sum;
         txv_count_$left.setText(sum+"");
-        c2.close();
+        c3.close();
     }
 }

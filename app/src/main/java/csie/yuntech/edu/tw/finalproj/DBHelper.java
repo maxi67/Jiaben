@@ -33,6 +33,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 "date VARCHAR , " + //日期
                 "kind VARCHAR , " + //類型
                 "cost INTEGER)"); //金額
+
+//        db.execSQL("CREATE  TABLE " + Item.INFO_TABLE+
+//                " (_id INTEGER PRIMARY KEY  NOT NULL , " + //ID
+//                "year INTEGER , " +
+//                "month INTEGER , " +
+//                "budget VARCHAR)");
     }
 
     //資料庫的版本更新
@@ -41,13 +47,4 @@ public class DBHelper extends SQLiteOpenHelper {
                           int oldVersion, int newVersion) {
     }
 
-//    public long addItem(String name, String data){
-//
-//        ContentValues values = new ContentValues();
-//        values.put(Item.KEY_NAME, name);
-//        values.put(Item.KEY_DATA, data);
-//        long id = getWritableDatabase().insert(Item.DATABASE_TABLE, null, values);
-//        Log.e("ADD",id + "");
-//        return id;
-//    }
 }
