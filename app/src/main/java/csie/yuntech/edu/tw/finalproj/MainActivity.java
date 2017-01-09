@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -361,6 +362,23 @@ public class MainActivity extends AppCompatActivity {
         //元件宣告
         LinearLayout content_view = (LinearLayout) findViewById(R.id.tab4);
         getLayoutInflater().inflate(R.layout.tab4_content, content_view, true);
+        Spinner ask_spinner = (Spinner)content_view.findViewById(R.id.ask_spinner);  //(kind)
+        ImageButton ask_shell = (ImageButton)content_view.findViewById(R.id.img_btn_shell);
+        //下拉式選單[種類(kind)]=========Spinner===============================
+        ArrayAdapter<CharSequence> foodList = ArrayAdapter.createFromResource(MainActivity.this,
+                R.array.food,
+                android.R.layout.simple_spinner_dropdown_item);
+        ask_spinner.setAdapter(foodList);
+        //==============================
+        //按鈕(亂數)=================================================
+        ask_shell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String ask_kind = getResources().getStringArray(R.array.food)[record_spinner.getSelectedItemPosition()];
+                //需要截取資料庫資訊之程式片段
+            }
+        });
+        //=========================================
     }
 
     //TabHost標籤建立(標籤名/標籤顯示文字/顯示圖片ID/標籤畫面ID)

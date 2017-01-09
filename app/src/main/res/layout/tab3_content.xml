@@ -16,7 +16,6 @@
         android:layout_height="wrap_content">
         <TextView
             android:padding="20dp"
-
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="本月預算"
