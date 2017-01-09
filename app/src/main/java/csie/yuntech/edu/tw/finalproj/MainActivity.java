@@ -37,15 +37,16 @@ public class MainActivity extends AppCompatActivity {
     DatePickerDialog.OnDateSetListener dateSetListener;
     Calendar myCalendar;
     Button btn_record_date, btn_record_save, btn_search_go, btn_count_$change;
-    Spinner record_spinner;
+    Spinner record_spinner, ask_spinner;
     ListView search_list;
-    TextView txv_count_sum, txv_count_daysLeft, txv_count_$left, txv_count_word;
+    TextView txv_count_sum, txv_count_daysLeft, txv_count_$left, txv_count_word, ask_txv_eat;
     private Cursor c;
     private SimpleCursorAdapter adapter;
 
     //Variables
     private String input_date = ""; // YYYY/MM/DD
     private String monthKeyword = "";
+    private String ss;
 //    private String[] monthCount = {"date LIKE '2017/01%'", "date LIKE '2017/02%'", "date LIKE '2017/03%'", "date LIKE '2017/04%'",
 //            "date LIKE '2017/05%'", "date LIKE '2017/02%'", "date LIKE '2017/03%'", "date LIKE '2017/04%'",
 //            "date LIKE '2017/01%'", "date LIKE '2017/02%'", "date LIKE '2017/03%'", "date LIKE '2017/04%'"};
@@ -362,20 +363,47 @@ public class MainActivity extends AppCompatActivity {
         //元件宣告
         LinearLayout content_view = (LinearLayout) findViewById(R.id.tab4);
         getLayoutInflater().inflate(R.layout.tab4_content, content_view, true);
-        Spinner ask_spinner = (Spinner)content_view.findViewById(R.id.ask_spinner);  //(kind)
+        ask_spinner = (Spinner)content_view.findViewById(R.id.ask_spinner);  //(kind)
+        ask_txv_eat = (TextView)content_view.findViewById(R.id.txv_eat);
         ImageButton ask_shell = (ImageButton)content_view.findViewById(R.id.img_btn_shell);
         //下拉式選單[種類(kind)]=========Spinner===============================
-        ArrayAdapter<CharSequence> foodList = ArrayAdapter.createFromResource(MainActivity.this,
+        final ArrayAdapter<CharSequence> foodList = ArrayAdapter.createFromResource(MainActivity.this,
                 R.array.food,
                 android.R.layout.simple_spinner_dropdown_item);
         ask_spinner.setAdapter(foodList);
         //==============================
+        //================spinner==========================
+        ask_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String ask_kind = getResources().getStringArray(R.array.food)[i];
+                ss = "kind LIKE '"+ask_kind+"'";
+                c = _helper.getReadableDatabase()
+                        .query(Item.DATABASE_TABLE, new String[]{"name"},
+                                ss,
+                                null, null, null, null);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         //按鈕(亂數)=================================================
         ask_shell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String ask_kind = getResources().getStringArray(R.array.food)[record_spinner.getSelectedItemPosition()];
                 //需要截取資料庫資訊之程式片段
+
+                if (c != null){
+                    c.moveToFirst();	//將指標移到第一筆資料
+                    int numofdata = c.getCount();
+                    int num = (int) (Math.random() * numofdata);
+                    c.moveToPosition(num);
+                    String food = c.getString(0);
+                    ask_txv_eat.setText(food);
+                }
             }
         });
         //=========================================
