@@ -3,8 +3,6 @@ package csie.yuntech.edu.tw.finalproj;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
@@ -15,7 +13,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -49,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     TimePickerDialog.OnTimeSetListener timeSetListener;
     Calendar myCalendar,notifc;
     ImageButton ask_shell;
-    Button btn_record_date, btn_record_save, btn_count_$change, notify_time;
+    Button btn_record_date, btn_record_save, btn_count_$change, notify_time, btn_showAll;
     Spinner record_spinner, ask_spinner;
     ListView search_list;
     TextView txv_show, txv_count_sum, txv_count_daysLeft, txv_count_$left, txv_count_word, ask_txv_eat;
@@ -90,6 +87,14 @@ public class MainActivity extends AppCompatActivity {
         initializeTab3();
         addTabHost("tag4", "吃啥", R.drawable.eatwhat, R.id.tab4);
         initializeTab4();
+
+        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                if(tabId.equals("tag2"))
+                    txv_show.setText("");
+            }
+        });
         //==================================
 
     }
@@ -106,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             firstTime = false;
             final View item = LayoutInflater.from(this).inflate(R.layout.item_view_inputnumber, null);
             new AlertDialog.Builder(this)
-                    .setTitle(R.string.welcometoApp)
+                    .setTitle(R.string.welcomeToApp)
                     .setMessage("我們會進行每月的預算控管，請先輸入本月預算")
                     .setView(item)
                     .setNegativeButton("Cancel", null)
@@ -274,6 +279,7 @@ public class MainActivity extends AppCompatActivity {
                 c = _helper.getReadableDatabase()
                         .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, "date");
                 adapter.changeCursor(c);
+                reloadCount(MONTH_BUDGET);
             }
         });
         //==================================================================
@@ -283,6 +289,8 @@ public class MainActivity extends AppCompatActivity {
         //元件宣告
         LinearLayout content_view = (LinearLayout) findViewById(R.id.tab2);
         getLayoutInflater().inflate(R.layout.tab2_content, content_view, true);
+        btn_showAll = (Button)content_view.findViewById(R.id.btn_showAll);
+        txv_show = (TextView)content_view.findViewById(R.id.txv_show);
 
         //插入標題列
         LinearLayout content_view2 = (LinearLayout)content_view.findViewById(R.id.list_title);
@@ -315,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 //從資料庫抓清單
                                 c = _helper.getReadableDatabase()
-                                        .query(Item.DATABASE_TABLE, null, name, null, null, null, "date");
+                                        .query(Item.DATABASE_TABLE, null, name, null, null, null, Item.KEY_DATE);
                                 adapter.changeCursor(c);
 
                                 if(c != null) {
@@ -324,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
                                     else
                                         txv_show.setText("搜尋" + search_name.getText().toString() + "的結果如下:");
                                 }
-                                }
+                            }
                         })
                         .show();
             }
@@ -339,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final View item = LayoutInflater.from(MainActivity.this).inflate(R.layout.item_view_select_month, null);
                 new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("請選擇時間")
+                        .setTitle("請輸入時間")
                         .setView(item)
                         .setNegativeButton("Cancel", null)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -348,6 +356,8 @@ public class MainActivity extends AppCompatActivity {
 
                                 final EditText edt_year = (EditText) item.findViewById(R.id.editText_year);
                                 final EditText edt_month = (EditText) item.findViewById(R.id.editText_month);
+                                edt_year.setText(CURRENT_YEAR+"");
+                                edt_month.setText(CURRENT_MONTH+"");
 
                                 int newMonth = Integer.valueOf(edt_month.getText().toString());
                                 if(newMonth < 1)
@@ -369,10 +379,10 @@ public class MainActivity extends AppCompatActivity {
                                     return;
                                 }
 
-                                String date = "date LIKE '"+ year + "/" + month + "%'";
+                                String date = Item.KEY_DATE +" LIKE '" + year + "/" + month + "%'";
                                 //從資料庫抓清單
                                 c = _helper.getReadableDatabase()
-                                        .query(Item.DATABASE_TABLE, null, date, null, null, null, "date");
+                                        .query(Item.DATABASE_TABLE, null, date, null, null, null, Item.KEY_DATE);
                                 adapter.changeCursor(c);
 
                                 if(c != null) {
@@ -397,6 +407,29 @@ public class MainActivity extends AppCompatActivity {
         title_kind.setText("種類");
         title_kind.setTextSize(18);
         title_kind.setTextColor(0xff882288);
+        title_kind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View item = LayoutInflater.from(MainActivity.this).inflate(R.layout.item_view_select, null);
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("請選擇類型")
+                        .setView(item)
+                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Spinner search_spinner  = (Spinner)item.findViewById(R.id.search_spinner);  //(kind)
+                                //下拉式選單[種類(kind)]=========Spinner===============================
+                                ArrayAdapter<CharSequence> foodList = ArrayAdapter.createFromResource(MainActivity.this,
+                                        food_random,
+                                        android.R.layout.simple_spinner_dropdown_item);
+                                search_spinner.setAdapter(foodList);
+                                //==============================
+                            }
+                        })
+                        .show();
+            }
+        });
 
         TextView title_cost = (TextView)item_view.findViewById(R.id.item_cost);
         title_cost.setText("金額");
@@ -407,12 +440,24 @@ public class MainActivity extends AppCompatActivity {
 
         //從資料庫抓清單
         c = _helper.getReadableDatabase()
-                .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, "date");
+                .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, Item.KEY_DATE);
         adapter = new SimpleCursorAdapter(this,
                 R.layout.list_style, c,
                 new String[]{"name", "date", "kind", "cost"},
                 new int[]{R.id.item_name, R.id.item_date, R.id.item_kind, R.id.item_cost}, 1);
         search_list.setAdapter(adapter);
+
+        btn_showAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //從資料庫抓清單
+                c = _helper.getReadableDatabase()
+                        .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, Item.KEY_DATE);
+                adapter.changeCursor(c);
+            }
+        });
+
+
 
         //刪除功能===========================================================
         search_list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -497,16 +542,16 @@ public class MainActivity extends AppCompatActivity {
         //==============================
 
         //================spinner==========================
-
         ask_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                ask_shell.setVisibility(View.VISIBLE);
                 if(i == 5) //全部類型
                     c2 = _helper.getReadableDatabase()
                             .query(Item.DATABASE_TABLE, new String[]{"name"},
-                                    null, null, null, null, null);
+                                    Item.KEY_NAME + "!= 'state'",
+                                    null, null, null, null);
                 else {
-                    ask_shell.setVisibility(View.VISIBLE);
                     ask_kind = getResources().getStringArray(food)[i];
                     String ss = "kind LIKE '" + ask_kind + "'";
                     c2 = _helper.getReadableDatabase()

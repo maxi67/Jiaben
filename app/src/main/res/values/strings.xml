@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">Eating King</string>
     <string-array name = "food_random">
-        <item>早餐</item>
-        <item>午餐</item>
-        <item>晚餐</item>
-        <item>點心</item>
-        <item>宵夜</item>
-        <item>全部類型</item>
+        <item>@string/arr1</item>
+        <item>@string/arr2</item>
+        <item>@string/arr3</item>
+        <item>@string/arr4</item>
+        <item>@string/arr5</item>
+        <item>@string/arr6</item>
     </string-array>
 
     <string-array name = "food">
@@ -32,6 +32,7 @@
     <string name="arr3">Dinner</string>
     <string name="arr4">Dessert</string>
     <string name="arr5">Midnight Snack</string>
-    <string name="welcometoApp">welcome to Eating King</string>
+    <string name="arr6">All kinds</string>
     <string name="notify">It is time to keep your expenses on record!</string>
+    <string name="showAll">show all</string>
 </resources>

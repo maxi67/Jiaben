@@ -16,5 +16,7 @@
     <string name="plzTypeName">請輸入品項的名稱</string>
     <string name="plzTypeCost">請輸入品項的金額</string>
     <string name="save">儲存</string>
-    <string name="instruction">說明:\\n點擊品項搜尋關鍵字，或時間搜尋特定月份</string>
+    <string name="instruction">說明:\n點擊品項搜尋關鍵字\n或時間搜尋特定月份</string>
+    <string name="arr6">所有類型</string>
+    <string name="showAll">顯示全部</string>
 </resources>

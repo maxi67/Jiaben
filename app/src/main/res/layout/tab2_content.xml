@@ -5,14 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:textColor="#220022"
-        android:text="@string/instruction"
-        android:textSize="15sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:textColor="#220022"
+            android:text="@string/instruction"
+            android:textSize="15sp"/>
+        <Button
+            android:id="@+id/btn_showAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="@string/showAll"/>
+    </LinearLayout>
+
     <TextView
         android:id="@+id/txv_show"
         android:layout_width="wrap_content"
@@ -29,6 +43,7 @@
         android:layout_marginTop="20sp"
         android:orientation="horizontal">
     </LinearLayout>
+
     <ListView
         android:id="@+id/search_list"
         android:layout_width="match_parent"

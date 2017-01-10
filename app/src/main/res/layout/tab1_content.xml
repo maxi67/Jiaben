@@ -13,7 +13,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="10dp"
+            android:textColor="@drawable/lightPurple"
             android:text="@string/title_name"
             android:textSize="24sp"/>
         <Button
@@ -66,12 +66,13 @@
         android:layout_height="wrap_content"
         android:text="@string/title_cost"
         android:padding="10dp"
-        android:textSize="18sp"/>
+        android:textColor="@drawable/lightPurple"
+        android:textSize="24sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="10dp"
+        android:padding="10dp"
         android:orientation="horizontal">
 
         <EditText
