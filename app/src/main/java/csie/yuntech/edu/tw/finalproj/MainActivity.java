@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 
+import static csie.yuntech.edu.tw.finalproj.R.array.food;
 import static csie.yuntech.edu.tw.finalproj.R.id.record_date;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,11 +37,12 @@ public class MainActivity extends AppCompatActivity {
     EditText record_name, record_$$, search_name;
     DatePickerDialog.OnDateSetListener dateSetListener;
     Calendar myCalendar;
+    ImageButton ask_shell;
     Button btn_record_date, btn_record_save, btn_search_go, btn_count_$change;
     Spinner record_spinner, ask_spinner;
     ListView search_list;
     TextView txv_count_sum, txv_count_daysLeft, txv_count_$left, txv_count_word, ask_txv_eat;
-    private Cursor c;
+    private Cursor c, c2;
     private SimpleCursorAdapter adapter;
 
     //Variables
@@ -49,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
     public int CURRENT_MONTH; //當月(1 ~ 12)
     public int MONTH_BUDGET; //預設預算
     private String input_date = ""; // YYYY/MM/DD
-    private String monthKeyword = ""; //紀錄當前的年/月(用來計算預算額度)
-    private String ss;
+    String ask_kind = "";
+  //  private String ss;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
         //下拉式選單[種類(kind)]=========Spinner===============================
         ArrayAdapter<CharSequence> foodList = ArrayAdapter.createFromResource(MainActivity.this,
-                R.array.food,
+                food,
                 android.R.layout.simple_spinner_dropdown_item);
         record_spinner.setAdapter(foodList);
         //============================================================
@@ -190,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
                 //取得資料
                 String input_name = record_name.getText().toString();
                 String input_cost = record_$$.getText().toString();
-                String input_kind = getResources().getStringArray(R.array.food)[record_spinner.getSelectedItemPosition()];
+                String input_kind = getResources().getStringArray(food)[record_spinner.getSelectedItemPosition()];
 
                 //檢查資料(防止空值)
                 if(input_name.length() == 0){
@@ -246,6 +248,30 @@ public class MainActivity extends AppCompatActivity {
         ((TextView)item_view.findViewById(R.id.item_name)).setText("品項");
         TextView title_date = (TextView)item_view.findViewById(R.id.item_date);
         title_date.setText("時間");
+//        title_date.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                final View item = LayoutInflater.from(MainActivity.this).inflate(R.layout.item_view_select_month, null);
+//                new AlertDialog.Builder(MainActivity.this)
+//                        .setTitle("請選擇時間")
+//                        .setView(item)
+//                        .setNegativeButton("Cancel", null)
+//                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                EditText editText = (EditText) item.findViewById(R.id.editText);
+//                                if (editText.getText().toString().length() == 0)
+//                                {
+//                                    editText.setError("不能為空");
+//                                    return;
+//                                }
+//                                reloadCount(Integer.valueOf(editText.getText().toString()));
+//                                ChangeState(CURRENT_YEAR + "", CURRENT_MONTH + "", MONTH_BUDGET, 0);
+//                            }
+//                        })
+//                        .show();
+//            }
+//        });
         TextView title_kind = (TextView)item_view.findViewById(R.id.item_kind);
         title_kind.setText("種類");
         TextView title_cost = (TextView)item_view.findViewById(R.id.item_cost);
@@ -346,22 +372,24 @@ public class MainActivity extends AppCompatActivity {
         getLayoutInflater().inflate(R.layout.tab4_content, content_view, true);
         ask_spinner = (Spinner)content_view.findViewById(R.id.ask_spinner);  //(kind)
         ask_txv_eat = (TextView)content_view.findViewById(R.id.txv_eat);
-        ImageButton ask_shell = (ImageButton)content_view.findViewById(R.id.img_btn_shell);
+        ask_shell = (ImageButton)content_view.findViewById(R.id.img_btn_shell);
 
         //下拉式選單[種類(kind)]=========Spinner===============================
         ArrayAdapter<CharSequence> foodList = ArrayAdapter.createFromResource(MainActivity.this,
-                R.array.food,
+                food,
                 android.R.layout.simple_spinner_dropdown_item);
         ask_spinner.setAdapter(foodList);
         //==============================
 
         //================spinner==========================
+
         ask_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String ask_kind = getResources().getStringArray(R.array.food)[i];
-                ss = "kind LIKE '"+ ask_kind+"'";
-                c = _helper.getReadableDatabase()
+                ask_shell.setVisibility(View.VISIBLE);
+                ask_kind = getResources().getStringArray(food)[i];
+                String ss = "kind LIKE '" + ask_kind + "'";
+                c2 = _helper.getReadableDatabase()
                         .query(Item.DATABASE_TABLE, new String[]{"name"},
                                 ss,
                                 null, null, null, null);
@@ -377,15 +405,21 @@ public class MainActivity extends AppCompatActivity {
         ask_shell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //需要截取資料庫資訊之程式片段
 
-                if (c != null){
-                    c.moveToFirst();	//將指標移到第一筆資料
-                    int numofdata = c.getCount();
-                    int num = (int) (Math.random() * numofdata);
-                    c.moveToPosition(num);
-                    String food = c.getString(0);
-                    ask_txv_eat.setText(food);
+                ask_txv_eat.setVisibility(View.VISIBLE);
+                //需要截取資料庫資訊之程式片段
+                if (c2 != null){
+                    if(c2.getCount() != 0) {
+                        c2.moveToFirst();    //將指標移到第一筆資料
+                        int numOfData = c2.getCount();
+                        int num = (int) (Math.random() * numOfData);
+                        c2.moveToPosition(num);
+                        String food = c2.getString(0);
+                        ask_txv_eat.setText("您吃" + food + "吧！");
+                    }
+                    else{
+                        ask_txv_eat.setText("您未登記" + ask_kind + "的相關資訊\n海螺不知道您都吃什麼");
+                    }
                 }
             }
         });
