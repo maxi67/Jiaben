@@ -8,45 +8,60 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="請輸入年份:"
+        android:layout_marginTop="20sp"
+        android:text="請選擇年份:"
         android:textColor="@drawable/lightBlue"
         android:textSize="35sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="90sp"
-        android:orientation="horizontal">
+        android:layout_marginTop="20sp"
+        android:orientation="horizontal"
+        android:background="@drawable/background_selecter">
 
-        <ImageButton
-            android:id="@+id/img_yearLeft"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:scaleType="fitCenter"
-            android:background="#00000000"
-            android:src="@drawable/left"/>
+        <!--<ImageButton-->
+            <!--android:id="@+id/img_yearLeft"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--android:background="#00000000"-->
+            <!--android:src="@drawable/left"/>-->
+        <!--<TextView-->
+            <!--android:id="@+id/editText_year"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="3"-->
+            <!--android:gravity="center"-->
+            <!--android:text="2016"-->
+            <!--android:textSize="60sp"-->
+            <!--android:textColor="@drawable/gray" />-->
         <EditText
             android:id="@+id/editText_year"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
+            android:gravity="center"
+            android:text="2016"
             android:textSize="60sp"
+            android:textColor="@drawable/gray"
             android:digits="0123456789"
             android:inputType="number"/>
-        <ImageButton
-            android:id="@+id/img_yearRight"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:scaleType="fitCenter"
-            android:background="#00000000"
-            android:src="@drawable/right"/>
+        <!--<ImageButton-->
+            <!--android:id="@+id/img_yearRight"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--android:background="#00000000"-->
+            <!--android:src="@drawable/right"/>-->
     </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="請輸入月份:"
+        android:text="請選擇月份:"
         android:layout_marginTop="20sp"
         android:textColor="@drawable/lightBlue"
         android:textSize="35sp"/>
@@ -54,32 +69,46 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100sp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="20sp"
+        android:background="@drawable/background_selecter">
 
-        <ImageButton
-            android:id="@+id/img_monthLeft"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:scaleType="fitCenter"
-            android:background="#00000000"
-            android:src="@drawable/left"/>
+        <!--<ImageButton-->
+            <!--android:id="@+id/img_monthLeft"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--android:background="#00000000"-->
+            <!--android:src="@drawable/left"/>-->
+        <!--<TextView-->
+            <!--android:id="@+id/editText_month"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="3"-->
+            <!--android:gravity="center"-->
+            <!--android:text="12"-->
+            <!--android:textSize="60sp"-->
+            <!--android:textColor="@drawable/gray" />-->
         <EditText
             android:id="@+id/editText_month"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
+            android:gravity="center"
+            android:text="12"
             android:textSize="60sp"
+            android:textColor="@drawable/gray"
             android:digits="0123456789"
             android:inputType="number"/>
-        <ImageButton
-            android:id="@+id/img_monthRight"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:scaleType="fitCenter"
-            android:background="#00000000"
-            android:src="@drawable/right"/>
+        <!--<ImageButton-->
+            <!--android:id="@+id/img_monthRight"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--android:background="#00000000"-->
+            <!--android:src="@drawable/right"/>-->
     </LinearLayout>
 
 </LinearLayout>

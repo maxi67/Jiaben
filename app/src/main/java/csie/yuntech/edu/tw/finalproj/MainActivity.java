@@ -27,6 +27,7 @@ import android.widget.Toast;
 import java.util.Calendar;
 
 import static csie.yuntech.edu.tw.finalproj.R.array.food;
+import static csie.yuntech.edu.tw.finalproj.R.array.food_random;
 import static csie.yuntech.edu.tw.finalproj.R.id.record_date;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,14 +35,14 @@ public class MainActivity extends AppCompatActivity {
     //Views
     private DBHelper _helper; //DB initialize
     TabHost tabHost;
-    EditText record_name, record_$$, search_name;
+    EditText record_name, record_$$;
     DatePickerDialog.OnDateSetListener dateSetListener;
     Calendar myCalendar;
     ImageButton ask_shell;
-    Button btn_record_date, btn_record_save, btn_search_go, btn_count_$change;
+    Button btn_record_date, btn_record_save, btn_count_$change;
     Spinner record_spinner, ask_spinner;
     ListView search_list;
-    TextView txv_count_sum, txv_count_daysLeft, txv_count_$left, txv_count_word, ask_txv_eat;
+    TextView txv_show, txv_count_sum, txv_count_daysLeft, txv_count_$left, txv_count_word, ask_txv_eat;
     private Cursor c, c2;
     private SimpleCursorAdapter adapter;
 
@@ -52,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
     public int MONTH_BUDGET; //預設預算
     private String input_date = ""; // YYYY/MM/DD
     String ask_kind = "";
-  //  private String ss;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(firstTime) { //初次使用App
             firstTime = false;
-            final View item = LayoutInflater.from(this).inflate(R.layout.item_view_input, null);
+            final View item = LayoutInflater.from(this).inflate(R.layout.item_view_inputnumber, null);
             new AlertDialog.Builder(this)
                     .setTitle(R.string.welcometoApp)
                     .setMessage("我們會進行每月的預算控管，請先輸入本月預算")
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            EditText editText = (EditText) item.findViewById(R.id.editText);
+                            EditText editText = (EditText) item.findViewById(R.id.edt_input);
                             if (editText.getText().toString().length() == 0) {
                                 editText.setError("不能為空");
                                 return;
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     CURRENT_YEAR = myCalendar.get(Calendar.YEAR);
                 }
-                final View item = LayoutInflater.from(this).inflate(R.layout.item_view_input, null);
+                final View item = LayoutInflater.from(this).inflate(R.layout.item_view_inputnumber, null);
                 new AlertDialog.Builder(this)
                         .setTitle("請輸入本月預算")
                         .setView(item)
@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                EditText editText = (EditText) item.findViewById(R.id.editText);
+                                EditText editText = (EditText) item.findViewById(R.id.edt_input);
                                 if (editText.getText().toString().length() == 0) {
                                     editText.setError("不能為空");
                                     return;
@@ -237,45 +237,125 @@ public class MainActivity extends AppCompatActivity {
         //元件宣告
         LinearLayout content_view = (LinearLayout) findViewById(R.id.tab2);
         getLayoutInflater().inflate(R.layout.tab2_content, content_view, true);
-        search_name = (EditText) content_view.findViewById(R.id.search_name);
-        btn_search_go = (Button)content_view.findViewById(R.id.search_go);
 
         //插入標題列
         LinearLayout content_view2 = (LinearLayout)content_view.findViewById(R.id.list_title);
         getLayoutInflater().inflate(R.layout.list_style, content_view2, true);
         View item_view = content_view2.getChildAt(0);
 
-        ((TextView)item_view.findViewById(R.id.item_name)).setText("品項");
+        TextView title_name = (TextView)item_view.findViewById(R.id.item_name);
+        title_name.setText("品項");
+        title_name.setTextSize(18);
+        title_name.setTextColor(0xff882288);
+        title_name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View item = LayoutInflater.from(MainActivity.this).inflate(R.layout.item_view_inputketword, null);
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("請輸入餐點關鍵字")
+                        .setView(item)
+                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                EditText search_name = (EditText) item.findViewById(R.id.edt_input);
+                                if (search_name.getText().toString().length() == 0)
+                                {
+                                    Toast.makeText(MainActivity.this, "不能為空", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                String name = "name LIKE '%" + search_name.getText().toString() + "%'";
+
+                                //從資料庫抓清單
+                                c = _helper.getReadableDatabase()
+                                        .query(Item.DATABASE_TABLE, null, name, null, null, null, "date");
+                                adapter.changeCursor(c);
+
+                                if(c != null) {
+                                    if(c.getCount() == 0)
+                                        txv_show.setText("查無結果");
+                                    else
+                                        txv_show.setText("搜尋" + search_name.getText().toString() + "的結果如下:");
+                                }
+                                }
+                        })
+                        .show();
+            }
+        });
+
         TextView title_date = (TextView)item_view.findViewById(R.id.item_date);
         title_date.setText("時間");
-//        title_date.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                final View item = LayoutInflater.from(MainActivity.this).inflate(R.layout.item_view_select_month, null);
-//                new AlertDialog.Builder(MainActivity.this)
-//                        .setTitle("請選擇時間")
-//                        .setView(item)
-//                        .setNegativeButton("Cancel", null)
-//                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                EditText editText = (EditText) item.findViewById(R.id.editText);
-//                                if (editText.getText().toString().length() == 0)
-//                                {
-//                                    editText.setError("不能為空");
-//                                    return;
-//                                }
-//                                reloadCount(Integer.valueOf(editText.getText().toString()));
-//                                ChangeState(CURRENT_YEAR + "", CURRENT_MONTH + "", MONTH_BUDGET, 0);
-//                            }
-//                        })
-//                        .show();
-//            }
-//        });
+        title_date.setTextSize(18);
+        title_date.setTextColor(0xff882288);
+        title_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View item = LayoutInflater.from(MainActivity.this).inflate(R.layout.item_view_select_month, null);
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("請選擇時間")
+                        .setView(item)
+                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                final EditText edt_year = (EditText) item.findViewById(R.id.editText_year);
+                                final EditText edt_month = (EditText) item.findViewById(R.id.editText_month);
+
+                                int newMonth = Integer.valueOf(edt_month.getText().toString());
+                                if(newMonth < 1)
+                                {
+                                    edt_month.setText("01");
+                                }else
+                                    edt_month.setText(newMonth+"");
+                                if(newMonth > 12)
+                                {
+                                    edt_month.setText("12");
+                                }else
+                                    edt_month.setText(newMonth+"");
+
+                                String year = String.format("%04d",Integer.valueOf(edt_year.getText().toString()));
+                                String month = String.format("%02d",Integer.valueOf(edt_month.getText().toString()));
+                                if (year.length() == 0 || month.length() == 0)
+                                {
+                                    Toast.makeText(MainActivity.this, "不能為空", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
+                                String date = "date LIKE '"+ year + "/" + month + "%'";
+                                //從資料庫抓清單
+                                c = _helper.getReadableDatabase()
+                                        .query(Item.DATABASE_TABLE, null, date, null, null, null, "date");
+                                adapter.changeCursor(c);
+
+                                if(c != null) {
+                                    c.moveToFirst();
+
+                                    int sum = 0;
+                                    for (int i = 0; i < c.getCount(); i++) { //計算總支出
+                                        sum += c.getInt(4);
+                                        c.moveToNext();
+                                    }
+                                    txv_show = (TextView)findViewById(R.id.txv_show);
+                                    String show = year + "年" + month + "月總花費: " + sum;
+                                    txv_show.setText(show);
+                                }
+                            }
+                        })
+                        .show();
+            }
+        });
+
         TextView title_kind = (TextView)item_view.findViewById(R.id.item_kind);
         title_kind.setText("種類");
+        title_kind.setTextSize(18);
+        title_kind.setTextColor(0xff882288);
+
         TextView title_cost = (TextView)item_view.findViewById(R.id.item_cost);
         title_cost.setText("金額");
+        title_cost.setTextSize(18);
+        title_cost.setTextColor(0xff882288);
 
         search_list = (ListView)content_view.findViewById(R.id.search_list);
 
@@ -288,17 +368,6 @@ public class MainActivity extends AppCompatActivity {
                 new int[]{R.id.item_name, R.id.item_date, R.id.item_kind, R.id.item_cost}, 1);
         search_list.setAdapter(adapter);
 
-        //=====================查詢=========================================
-        btn_search_go.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(search_name.getText().toString().length() != 0){
-         //           String name = search_name.getText().toString().trim();
-                }else{
-                    Toast.makeText(MainActivity.this, "名稱不得為空", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
         //刪除功能===========================================================
         search_list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -343,7 +412,7 @@ public class MainActivity extends AppCompatActivity {
         btn_count_$change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final View item = LayoutInflater.from(MainActivity.this).inflate(R.layout.item_view_input, null);
+                final View item = LayoutInflater.from(MainActivity.this).inflate(R.layout.item_view_inputnumber, null);
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle("請輸入本月預算")
                         .setView(item)
@@ -351,7 +420,7 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                EditText editText = (EditText) item.findViewById(R.id.editText);
+                                EditText editText = (EditText) item.findViewById(R.id.edt_input);
                                 if (editText.getText().toString().length() == 0)
                                 {
                                     editText.setError("不能為空");
@@ -376,7 +445,7 @@ public class MainActivity extends AppCompatActivity {
 
         //下拉式選單[種類(kind)]=========Spinner===============================
         ArrayAdapter<CharSequence> foodList = ArrayAdapter.createFromResource(MainActivity.this,
-                food,
+                food_random,
                 android.R.layout.simple_spinner_dropdown_item);
         ask_spinner.setAdapter(foodList);
         //==============================
@@ -386,13 +455,19 @@ public class MainActivity extends AppCompatActivity {
         ask_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                ask_shell.setVisibility(View.VISIBLE);
-                ask_kind = getResources().getStringArray(food)[i];
-                String ss = "kind LIKE '" + ask_kind + "'";
-                c2 = _helper.getReadableDatabase()
-                        .query(Item.DATABASE_TABLE, new String[]{"name"},
-                                ss,
-                                null, null, null, null);
+                if(i == 5) //全部類型
+                    c2 = _helper.getReadableDatabase()
+                            .query(Item.DATABASE_TABLE, new String[]{"name"},
+                                    null, null, null, null, null);
+                else {
+                    ask_shell.setVisibility(View.VISIBLE);
+                    ask_kind = getResources().getStringArray(food)[i];
+                    String ss = "kind LIKE '" + ask_kind + "'";
+                    c2 = _helper.getReadableDatabase()
+                            .query(Item.DATABASE_TABLE, new String[]{"name"},
+                                    ss,
+                                    null, null, null, null);
+                }
             }
 
             @Override
@@ -415,10 +490,10 @@ public class MainActivity extends AppCompatActivity {
                         int num = (int) (Math.random() * numOfData);
                         c2.moveToPosition(num);
                         String food = c2.getString(0);
-                        ask_txv_eat.setText("您吃" + food + "吧！");
+                        ask_txv_eat.setText("吃" + food + "吧！");
                     }
                     else{
-                        ask_txv_eat.setText("您未登記" + ask_kind + "的相關資訊\n海螺不知道您都吃什麼");
+                        ask_txv_eat.setText("未登記" + ask_kind + "的相關資訊\n海螺不知道您都吃什麼");
                     }
                 }
             }

@@ -1,5 +1,14 @@
 <resources>
     <string name="app_name">Eating King</string>
+    <string-array name = "food_random">
+        <item>早餐</item>
+        <item>午餐</item>
+        <item>晚餐</item>
+        <item>點心</item>
+        <item>宵夜</item>
+        <item>全部類型</item>
+    </string-array>
+
     <string-array name = "food">
         <item>早餐</item>
         <item>午餐</item>
@@ -7,5 +16,14 @@
         <item>點心</item>
         <item>宵夜</item>
     </string-array>
-    <string name="welcometoApp">welcome to Eating King</string>
+
+    <string name="welcomeToApp">welcome to Eating King</string>
+    <string name="title_name">name</string>
+    <string name="title_date">date</string>
+    <string name="title_kind">kind</string>
+    <string name="title_cost">cost</string>
+    <string name="plzTypeName">Please type name of the item</string>
+    <string name="plzTypeCost">please type cost of the item</string>
+    <string name="save">save</string>
+    <string name="instruction">type name to search keyword, and type date to search all name of  certain month</string>
 </resources>
