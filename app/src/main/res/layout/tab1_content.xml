@@ -5,12 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="@string/title_name"
-        android:textSize="24sp"/>
+        android:padding="10dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:text="@string/title_name"
+            android:textSize="24sp"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/record_notify_time"
+            android:text="設定通知"
+            android:textSize="18sp"
+            android:layout_weight="0.5"/>
+    </LinearLayout>
     <EditText
         android:id="@+id/record_name"
         android:layout_width="match_parent"
@@ -21,7 +34,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:paddingTop="30dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="30dp">
 
         <Button
             android:layout_width="match_parent"
@@ -49,23 +65,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/title_cost"
+        android:padding="10dp"
         android:textSize="18sp"/>
-    <EditText
-        android:id="@+id/record_$$"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:digits="0123456789"
-        android:hint="@string/plzTypeCost"
-        android:gravity="center" />
 
-    <Button
-        android:id="@+id/record_save"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/save"
-        android:textSize="18sp" />
+        android:layout_height="match_parent"
+        android:paddingBottom="10dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/record_$$"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:digits="0123456789"
+            android:hint="@string/plzTypeCost"
+            android:layout_weight="1"
+            android:gravity="center" />
+
+        <Button
+            android:id="@+id/record_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/save"
+            android:layout_weight="1"
+            android:textSize="18sp" />
+    </LinearLayout>
 
 </LinearLayout>
 

@@ -10,11 +10,11 @@
     </string-array>
 
     <string-array name = "food">
-        <item>早餐</item>
-        <item>午餐</item>
-        <item>晚餐</item>
-        <item>點心</item>
-        <item>宵夜</item>
+        <item>@string/arr1</item>
+        <item>@string/arr2</item>
+        <item>@string/arr3</item>
+        <item>@string/arr4</item>
+        <item>@string/arr5</item>
     </string-array>
 
     <string name="welcomeToApp">welcome to Eating King</string>
@@ -26,4 +26,12 @@
     <string name="plzTypeCost">please type cost of the item</string>
     <string name="save">save</string>
     <string name="instruction">type name to search keyword, and type date to search all name of  certain month</string>
+
+    <string name="arr1">Breakfast</string>
+    <string name="arr2">Lunch</string>
+    <string name="arr3">Dinner</string>
+    <string name="arr4">Dessert</string>
+    <string name="arr5">Midnight Snack</string>
+    <string name="welcometoApp">welcome to Eating King</string>
+    <string name="notify">It is time to keep your expenses on record!</string>
 </resources>
