@@ -2,4 +2,10 @@
 <resources>
     <string name="app_name">呷飯皇帝大</string>
     <string name="welcometoApp">歡迎使用呷飯皇帝大</string>
+    <string name="notify">記得記帳哦！</string>
+    <string name="arr1">早餐</string>
+    <string name="arr2">午餐</string>
+    <string name="arr3">晚餐</string>
+    <string name="arr4">點心</string>
+    <string name="arr5">宵夜</string>
 </resources>

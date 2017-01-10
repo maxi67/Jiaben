@@ -1,13 +1,21 @@
 package csie.yuntech.edu.tw.finalproj;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,6 +30,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -36,12 +45,14 @@ public class MainActivity extends AppCompatActivity {
     TabHost tabHost;
     EditText record_name, record_$$, search_name;
     DatePickerDialog.OnDateSetListener dateSetListener;
-    Calendar myCalendar;
+    TimePickerDialog.OnTimeSetListener timeSetListener;
+    Calendar myCalendar,notifc;
     ImageButton ask_shell;
-    Button btn_record_date, btn_record_save, btn_search_go, btn_count_$change;
+    Button btn_record_date, btn_record_save, btn_search_go, btn_count_$change, notify_time;
     Spinner record_spinner, ask_spinner;
     ListView search_list;
     TextView txv_count_sum, txv_count_daysLeft, txv_count_$left, txv_count_word, ask_txv_eat;
+
     private Cursor c, c2;
     private SimpleCursorAdapter adapter;
 
@@ -52,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     public int MONTH_BUDGET; //預設預算
     private String input_date = ""; // YYYY/MM/DD
     String ask_kind = "";
+
   //  private String ss;
 
     @Override
@@ -60,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         myCalendar = Calendar.getInstance();  //取得手機當前日期
+        notifc = Calendar.getInstance();
         CURRENT_YEAR = myCalendar.get(Calendar.YEAR);
         CURRENT_MONTH = myCalendar.get(Calendar.MONTH) + 1;
 
@@ -78,8 +91,6 @@ public class MainActivity extends AppCompatActivity {
         initializeTab3();
         addTabHost("tag4", "吃啥", R.drawable.eatwhat, R.id.tab4);
         initializeTab4();
-        //==================================
-
     }
 
     @Override
@@ -145,6 +156,14 @@ public class MainActivity extends AppCompatActivity {
                 reloadCount(MONTH_BUDGET);
         }
     }
+    private void setAlarm(Calendar target){
+        // ===============建立NotificationCompat.Builder物件=================
+        Intent intent = new Intent();
+        intent.setClass(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this,0,intent,0);
+        AlarmManager alarmManager = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, target.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+    }
 
     public void initializeTab1(){
         //元件宣告
@@ -153,8 +172,34 @@ public class MainActivity extends AppCompatActivity {
         record_spinner = (Spinner)content_view.findViewById(R.id.record_spinner);  //(kind)
         btn_record_date = (Button)content_view.findViewById(record_date);        //(date)
         btn_record_save = (Button)content_view.findViewById(R.id.record_save);
+        notify_time = (Button)content_view.findViewById(R.id.record_notify_time);
         record_name = (EditText)content_view.findViewById(R.id.record_name);    //(name)
         record_$$ = (EditText)content_view.findViewById(R.id.record_$$);        //(cost)
+        //=================通知時間設定============================
+        notify_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myCalendar = Calendar.getInstance();
+                TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this, timeSetListener,
+                        myCalendar.get(Calendar.HOUR_OF_DAY),
+                        myCalendar.get(Calendar.MINUTE),true);
+                timePickerDialog.show();
+            }
+        });
+        timeSetListener = new TimePickerDialog.OnTimeSetListener(){
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+                notifc.set(Calendar.HOUR_OF_DAY, hour);
+                notifc.set(Calendar.MINUTE, minute);
+                notifc.set(Calendar.SECOND,0);
+                if(notifc.compareTo(myCalendar)<=0){
+                    int day = notifc.get(Calendar.DAY_OF_MONTH);
+                    notifc.set(Calendar.DAY_OF_MONTH,day+1);
+                }
+                setAlarm(notifc);
+                Toast.makeText(MainActivity.this, "Notification set",Toast.LENGTH_SHORT).show();
+            }
+        };
 
         //下拉式選單[種類(kind)]=========Spinner===============================
         ArrayAdapter<CharSequence> foodList = ArrayAdapter.createFromResource(MainActivity.this,
