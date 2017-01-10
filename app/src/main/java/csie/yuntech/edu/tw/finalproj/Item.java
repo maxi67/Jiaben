@@ -8,6 +8,7 @@ public class Item {
 
     // Labels DB
     public  static final String DATABASE_TABLE = "db_table";
+    public  static final String INFO_TABLE = "info_table";
 
     // Labels  of Table Columns' names
     public static final String KEY_ID = "_id";
@@ -16,9 +17,6 @@ public class Item {
     public static final String KEY_KIND = "kind"; //類型
     public static final String KEY_COST = "cost"; //金額
 
-    public static boolean firstTime = true;
-    public static int CURRENT_YEAR = 2017; //當年
-    public static int CURRENT_MONTH = 0; //當月(0 ~ 11)
-    public static String MONTH_BUDGET = "2000"; //預設預算
+
 
 }

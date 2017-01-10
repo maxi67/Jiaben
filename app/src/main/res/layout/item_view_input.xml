@@ -12,5 +12,4 @@
         android:textSize="30sp"
         android:digits="0123456789"
         android:inputType="number"/>
-
 </LinearLayout>

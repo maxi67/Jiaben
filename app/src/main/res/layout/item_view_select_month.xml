@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="請輸入年份:"
+        android:textColor="@drawable/lightBlue"
+        android:textSize="35sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="90sp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/img_yearLeft"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="#00000000"
+            android:src="@drawable/left"/>
+        <EditText
+            android:id="@+id/editText_year"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:textSize="60sp"
+            android:digits="0123456789"
+            android:inputType="number"/>
+        <ImageButton
+            android:id="@+id/img_yearRight"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="#00000000"
+            android:src="@drawable/right"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="請輸入月份:"
+        android:layout_marginTop="20sp"
+        android:textColor="@drawable/lightBlue"
+        android:textSize="35sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100sp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/img_monthLeft"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="#00000000"
+            android:src="@drawable/left"/>
+        <EditText
+            android:id="@+id/editText_month"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:textSize="60sp"
+            android:digits="0123456789"
+            android:inputType="number"/>
+        <ImageButton
+            android:id="@+id/img_monthRight"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="#00000000"
+            android:src="@drawable/right"/>
+    </LinearLayout>
+
+</LinearLayout>

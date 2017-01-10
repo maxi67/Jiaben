@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 
+import static csie.yuntech.edu.tw.finalproj.R.array.food;
 import static csie.yuntech.edu.tw.finalproj.R.id.record_date;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,31 +37,35 @@ public class MainActivity extends AppCompatActivity {
     EditText record_name, record_$$, search_name;
     DatePickerDialog.OnDateSetListener dateSetListener;
     Calendar myCalendar;
+    ImageButton ask_shell;
     Button btn_record_date, btn_record_save, btn_search_go, btn_count_$change;
     Spinner record_spinner, ask_spinner;
     ListView search_list;
     TextView txv_count_sum, txv_count_daysLeft, txv_count_$left, txv_count_word, ask_txv_eat;
-    private Cursor c;
+    private Cursor c, c2;
     private SimpleCursorAdapter adapter;
 
     //Variables
+    private boolean firstTime;
+    public int CURRENT_YEAR; //當年
+    public int CURRENT_MONTH; //當月(1 ~ 12)
+    public int MONTH_BUDGET; //預設預算
     private String input_date = ""; // YYYY/MM/DD
-    private String monthKeyword = "";
-    private String ss;
-//    private String[] monthCount = {"date LIKE '2017/01%'", "date LIKE '2017/02%'", "date LIKE '2017/03%'", "date LIKE '2017/04%'",
-//            "date LIKE '2017/05%'", "date LIKE '2017/02%'", "date LIKE '2017/03%'", "date LIKE '2017/04%'",
-//            "date LIKE '2017/01%'", "date LIKE '2017/02%'", "date LIKE '2017/03%'", "date LIKE '2017/04%'"};
+    String ask_kind = "";
+  //  private String ss;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        _helper = DBHelper.getInstance(this); //資料庫物件初始化
         myCalendar = Calendar.getInstance();  //取得手機當前日期
-        Item.CURRENT_YEAR = myCalendar.get(Calendar.YEAR);
-        Item.CURRENT_MONTH = myCalendar.get(Calendar.MONTH);
-        monthKeyword = String.format("date LIKE '%04d/%02d%%'", Item.CURRENT_YEAR, Item.CURRENT_MONTH + 1);
+        CURRENT_YEAR = myCalendar.get(Calendar.YEAR);
+        CURRENT_MONTH = myCalendar.get(Calendar.MONTH) + 1;
+
+        _helper = DBHelper.getInstance(this); //資料庫物件初始化
+        firstTime = isFirstLaunchApp();
+
         //=============tabHost===================
         tabHost = (TabHost)findViewById(R.id.tabhost);
         tabHost.setup();
@@ -75,40 +80,18 @@ public class MainActivity extends AppCompatActivity {
         initializeTab4();
         //==================================
 
-
-        //====================預算==========================================
-//        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
-//            @Override
-//            public void onTabChanged(String s) {
-//                switch (s.charAt(3)){
-//                    case '2':
-//                        //從資料庫抓清單
-//                        c = _helper.getReadableDatabase()
-//                                .query(Item.DATABASE_TABLE, null, null, null, null, null, "date");
-//                        adapter = new SimpleCursorAdapter(MainActivity.this,
-//                                R.layout.list_style, c,
-//                                new String[]{"name", "date", "kind", "cost"},
-//                                new int[]{R.id.item_name, R.id.item_date, R.id.item_kind, R.id.item_cost}, 1);
-//                        adapter.changeCursor(c);
-//                        break;
-//                    case '3':
-//                        reloadCount();
-//                        break;
-//                }
-//            }
-//        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        //更新剩餘日期
+        //更新剩餘日期(當月最大值 - 當天日期)
         String daysLeft = Integer.toString(myCalendar.getActualMaximum(Calendar.DAY_OF_MONTH) - myCalendar.get(Calendar.DAY_OF_MONTH));
         txv_count_daysLeft.setText(daysLeft);
 
-        if(Item.firstTime) { //初次使用App
-            Item.firstTime = false;
+        if(firstTime) { //初次使用App
+            firstTime = false;
             final View item = LayoutInflater.from(this).inflate(R.layout.item_view_input, null);
             new AlertDialog.Builder(this)
                     .setTitle(R.string.welcometoApp)
@@ -123,20 +106,20 @@ public class MainActivity extends AppCompatActivity {
                                 editText.setError("不能為空");
                                 return;
                             }
-                            Item.MONTH_BUDGET = editText.getText().toString();
+                            reloadCount(Integer.valueOf(editText.getText().toString()));
+                            ChangeState(CURRENT_YEAR + "", CURRENT_MONTH + "", MONTH_BUDGET, 0);
                         }
                     })
                     .show();
-            reloadCount();
         }
         else {
             //如果進到下個月，重新詢問預算
-            int getMonth = myCalendar.get(Calendar.MONTH);
-            if (getMonth != Item.CURRENT_MONTH) {
+            final int getMonth = myCalendar.get(Calendar.MONTH) + 1;
+            if (getMonth != CURRENT_MONTH) {
 
                 if(getMonth == 0) //進入新的一年
                 {
-                    Item.CURRENT_YEAR = myCalendar.get(Calendar.YEAR);
+                    CURRENT_YEAR = myCalendar.get(Calendar.YEAR);
                 }
                 final View item = LayoutInflater.from(this).inflate(R.layout.item_view_input, null);
                 new AlertDialog.Builder(this)
@@ -151,14 +134,15 @@ public class MainActivity extends AppCompatActivity {
                                     editText.setError("不能為空");
                                     return;
                                 }
-                                Item.MONTH_BUDGET = editText.getText().toString();
+                                reloadCount(Integer.valueOf(editText.getText().toString()));
+                                ChangeState(CURRENT_YEAR + "", CURRENT_MONTH + "", MONTH_BUDGET, 1);
+                                CURRENT_MONTH = getMonth;
                             }
                         })
                         .show();
-                reloadCount();
-                Item.CURRENT_MONTH = myCalendar.get(Calendar.MONTH);
-                monthKeyword = String.format("date LIKE '%04d/%02d%%'", Item.CURRENT_YEAR, Item.CURRENT_MONTH + 1);
             }
+            else
+                reloadCount(MONTH_BUDGET);
         }
     }
 
@@ -174,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
         //下拉式選單[種類(kind)]=========Spinner===============================
         ArrayAdapter<CharSequence> foodList = ArrayAdapter.createFromResource(MainActivity.this,
-                R.array.food,
+                food,
                 android.R.layout.simple_spinner_dropdown_item);
         record_spinner.setAdapter(foodList);
         //============================================================
@@ -208,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
                 //取得資料
                 String input_name = record_name.getText().toString();
                 String input_cost = record_$$.getText().toString();
-                String input_kind = getResources().getStringArray(R.array.food)[record_spinner.getSelectedItemPosition()];
+                String input_kind = getResources().getStringArray(food)[record_spinner.getSelectedItemPosition()];
 
                 //檢查資料(防止空值)
                 if(input_name.length() == 0){
@@ -240,10 +224,10 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton("OK", null)
                         .show();
 
-//                //Update listView
-//                c = _helper.getReadableDatabase()
-//                        .query(Item.DATABASE_TABLE, null, null, null, null, null, null);
-//                adapter.changeCursor(c);
+                //Update listView
+                c = _helper.getReadableDatabase()
+                        .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, "date");
+                adapter.changeCursor(c);
             }
         });
         //==================================================================
@@ -264,6 +248,30 @@ public class MainActivity extends AppCompatActivity {
         ((TextView)item_view.findViewById(R.id.item_name)).setText("品項");
         TextView title_date = (TextView)item_view.findViewById(R.id.item_date);
         title_date.setText("時間");
+//        title_date.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                final View item = LayoutInflater.from(MainActivity.this).inflate(R.layout.item_view_select_month, null);
+//                new AlertDialog.Builder(MainActivity.this)
+//                        .setTitle("請選擇時間")
+//                        .setView(item)
+//                        .setNegativeButton("Cancel", null)
+//                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                EditText editText = (EditText) item.findViewById(R.id.editText);
+//                                if (editText.getText().toString().length() == 0)
+//                                {
+//                                    editText.setError("不能為空");
+//                                    return;
+//                                }
+//                                reloadCount(Integer.valueOf(editText.getText().toString()));
+//                                ChangeState(CURRENT_YEAR + "", CURRENT_MONTH + "", MONTH_BUDGET, 0);
+//                            }
+//                        })
+//                        .show();
+//            }
+//        });
         TextView title_kind = (TextView)item_view.findViewById(R.id.item_kind);
         title_kind.setText("種類");
         TextView title_cost = (TextView)item_view.findViewById(R.id.item_cost);
@@ -273,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
 
         //從資料庫抓清單
         c = _helper.getReadableDatabase()
-                .query(Item.DATABASE_TABLE, null, null, null, null, null, "date");
+                .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, "date");
         adapter = new SimpleCursorAdapter(this,
                 R.layout.list_style, c,
                 new String[]{"name", "date", "kind", "cost"},
@@ -311,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 //Update listView
                                 c = _helper.getReadableDatabase()
-                                        .query(Item.DATABASE_TABLE, null, null, null, null, null, "date");
+                                        .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, "date");
                                 adapter.changeCursor(c);
                             }
                         })
@@ -332,7 +340,6 @@ public class MainActivity extends AppCompatActivity {
         txv_count_daysLeft = (TextView)content_view.findViewById(R.id.count_daysLeft);
         txv_count_word = (TextView)content_view.findViewById(R.id.count_word);
 
-        reloadCount();
         btn_count_$change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -350,8 +357,8 @@ public class MainActivity extends AppCompatActivity {
                                     editText.setError("不能為空");
                                     return;
                                 }
-                                Item.MONTH_BUDGET = editText.getText().toString();
-                                reloadCount();
+                                reloadCount(Integer.valueOf(editText.getText().toString()));
+                                ChangeState(CURRENT_YEAR + "", CURRENT_MONTH + "", MONTH_BUDGET, 0);
                             }
                         })
                         .show();
@@ -365,20 +372,24 @@ public class MainActivity extends AppCompatActivity {
         getLayoutInflater().inflate(R.layout.tab4_content, content_view, true);
         ask_spinner = (Spinner)content_view.findViewById(R.id.ask_spinner);  //(kind)
         ask_txv_eat = (TextView)content_view.findViewById(R.id.txv_eat);
-        ImageButton ask_shell = (ImageButton)content_view.findViewById(R.id.img_btn_shell);
+        ask_shell = (ImageButton)content_view.findViewById(R.id.img_btn_shell);
+
         //下拉式選單[種類(kind)]=========Spinner===============================
-        final ArrayAdapter<CharSequence> foodList = ArrayAdapter.createFromResource(MainActivity.this,
-                R.array.food,
+        ArrayAdapter<CharSequence> foodList = ArrayAdapter.createFromResource(MainActivity.this,
+                food,
                 android.R.layout.simple_spinner_dropdown_item);
         ask_spinner.setAdapter(foodList);
         //==============================
+
         //================spinner==========================
+
         ask_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String ask_kind = getResources().getStringArray(R.array.food)[i];
-                ss = "kind LIKE '"+ask_kind+"'";
-                c = _helper.getReadableDatabase()
+                ask_shell.setVisibility(View.VISIBLE);
+                ask_kind = getResources().getStringArray(food)[i];
+                String ss = "kind LIKE '" + ask_kind + "'";
+                c2 = _helper.getReadableDatabase()
                         .query(Item.DATABASE_TABLE, new String[]{"name"},
                                 ss,
                                 null, null, null, null);
@@ -394,15 +405,21 @@ public class MainActivity extends AppCompatActivity {
         ask_shell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //需要截取資料庫資訊之程式片段
 
-                if (c != null){
-                    c.moveToFirst();	//將指標移到第一筆資料
-                    int numofdata = c.getCount();
-                    int num = (int) (Math.random() * numofdata);
-                    c.moveToPosition(num);
-                    String food = c.getString(0);
-                    ask_txv_eat.setText(food);
+                ask_txv_eat.setVisibility(View.VISIBLE);
+                //需要截取資料庫資訊之程式片段
+                if (c2 != null){
+                    if(c2.getCount() != 0) {
+                        c2.moveToFirst();    //將指標移到第一筆資料
+                        int numOfData = c2.getCount();
+                        int num = (int) (Math.random() * numOfData);
+                        c2.moveToPosition(num);
+                        String food = c2.getString(0);
+                        ask_txv_eat.setText("您吃" + food + "吧！");
+                    }
+                    else{
+                        ask_txv_eat.setText("您未登記" + ask_kind + "的相關資訊\n海螺不知道您都吃什麼");
+                    }
                 }
             }
         });
@@ -420,25 +437,62 @@ public class MainActivity extends AppCompatActivity {
         tabHost.addTab(spec);
     }
 
-    public void reloadCount(){
-        txv_count_sum.setText(Item.MONTH_BUDGET);
-        Cursor c2 = _helper.getReadableDatabase()
+    //更新預算介面(本月預算、剩餘額度)
+    public void reloadCount(int newBudget){
+        //紀錄當前的年/月(抓資料的語法)
+        String monthKeyword = String.format("date LIKE '%04d/%02d%%'", CURRENT_YEAR, CURRENT_MONTH);
+
+        //更新預算
+        MONTH_BUDGET = newBudget;
+        txv_count_sum.setText(newBudget+"");
+
+        //統計當月總支出
+        Cursor c3 = _helper.getReadableDatabase()
                 .query(Item.DATABASE_TABLE, //table
                         new String[] {"cost"}, //columns
-                 //       "date LIKE '2017/01%'", //WHERE
                         monthKeyword, //WHERE
                         null, null, null, null); //selectionArgs, groupBy, having, orderBy
-        if (c2 != null)
-            c2.moveToFirst();	//將指標移到第一筆資料
 
-        int sum = 0;
-        for(int i = 0; i < c2.getCount(); i++)
-        {
-            sum += c2.getInt(0);
-            c2.moveToNext();
+        if (c3 != null) {
+            c3.moveToFirst();    //將指標移到第一筆資料
+
+            int sum = 0;
+            for (int i = 0; i < c3.getCount(); i++) { //計算總支出
+                sum += c3.getInt(0);
+                c3.moveToNext();
+            }
+            sum = newBudget - sum;
+            txv_count_$left.setText(sum + "");
+            c3.close();
         }
-        sum = Integer.valueOf(Item.MONTH_BUDGET) - sum;
-        txv_count_$left.setText(sum+"");
-        c2.close();
+    }
+
+    public boolean isFirstLaunchApp(){
+        c = _helper.getReadableDatabase(). //查找有無狀態列，若無，getCount() == 0，表示第一次執行App
+                query(Item.DATABASE_TABLE, null, "name LIKE 'state'", null, null, null, null);
+
+        if (c.getCount() == 0) //第一次開啟App，新建state資料，並回傳true
+            return true;
+        else {
+            c.moveToFirst();
+            MONTH_BUDGET = Integer.valueOf(c.getString(4));
+            return false;
+        }
+    }
+
+    //更新狀態(當前年，當前月，當前預算，mode: 0 新增/1 修改)
+    public void ChangeState(String year, String month, int budget, int mode){
+
+            //設定存進資料庫的容器(參數: 資料表欄名稱 / 資料值，id是主鍵會自己遞增生成，不用另外寫)
+            ContentValues values = new ContentValues();
+            values.put(Item.KEY_NAME, "state"); //VARCHAR
+            values.put(Item.KEY_DATE, year); //VARCHAR year month(YYYY/MM)
+            values.put(Item.KEY_KIND, month); //VARCHAR first (Y/N)
+            values.put(Item.KEY_COST, budget); //INTEGER budget
+
+        if(mode == 0) //資料庫新增資料語法 (參數: 資料表名稱 /好像是如果第三個參數沒給值要放什麼 /要放的值)
+            _helper.getWritableDatabase().insert(Item.DATABASE_TABLE, null, values);
+        if(mode == 1) //資料庫更新資料語法 (參數: 資料表名稱 /要放的值 /WHERE /WhereArgs)
+            _helper.getWritableDatabase().update(Item.DATABASE_TABLE, values, Item.KEY_ID + "= 1", null);
     }
 }
