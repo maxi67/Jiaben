@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     public int MONTH_BUDGET; //預設預算
     private int daysLeft;
     private String input_date = ""; // YYYY/MM/DD
+    private String input_time = ""; // MM/SS
     String ask_kind = "";
 
     @Override
@@ -191,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
         record_$$ = (EditText)content_view.findViewById(R.id.record_$$); //(cost)
 
         //=================通知時間設定============================
+        SaveNotificationTime(0);
         btn_notify_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -213,7 +215,8 @@ public class MainActivity extends AppCompatActivity {
                     int day = notifc.get(Calendar.DAY_OF_MONTH);
                     notifc.set(Calendar.DAY_OF_MONTH, day + 1); //隔天開始同時間才會叫
                 }
-                btn_notify_time.setText(String.format("%02d:%02d", hour, minute));  //將選取結果show在按鈕上
+                input_time = String.format("%02d:%02d", hour, minute);
+                SaveNotificationTime(1);
                 setAlarm(notifc);
             }
         };
@@ -299,8 +302,9 @@ public class MainActivity extends AppCompatActivity {
         //初始化清單[ListView] ==============================================
         search_list = (ListView)content_view.findViewById(R.id.search_list);
 
-        c = _helper.getReadableDatabase() //從資料庫抓清單
-                .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, Item.KEY_DATE);
+        c = _helper.getReadableDatabase()
+                .query(Item.DATABASE_TABLE, null,
+                        Item.KEY_NAME + "!= 'state' AND " + Item.KEY_NAME + "!= 'state2'", null, null, null, Item.KEY_DATE);
         adapter = new SimpleCursorAdapter(this,
                 R.layout.list_style, c,
                 new String[]{Item.KEY_NAME, Item.KEY_DATE, Item.KEY_KIND, Item.KEY_COST},
@@ -317,6 +321,7 @@ public class MainActivity extends AppCompatActivity {
         title_name.setText(getResources().getString(R.string.title_name));
         title_name.setTextSize(18);
         title_name.setTextColor(0xff882288);
+        title_name.setBackgroundColor(0xffffcc88);
         title_name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -358,22 +363,22 @@ public class MainActivity extends AppCompatActivity {
         title_date.setText(getResources().getString(R.string.title_date));
         title_date.setTextSize(18);
         title_date.setTextColor(0xff882288);
+        title_date.setBackgroundColor(0xffffcc88);
         title_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final View item = LayoutInflater.from(MainActivity.this).inflate(R.layout.item_view_select_month, null);
+                final EditText edt_year = (EditText) item.findViewById(R.id.editText_year);
+                final EditText edt_month = (EditText) item.findViewById(R.id.editText_month);
+                edt_year.setText(CURRENT_YEAR+"");
+                edt_month.setText(CURRENT_MONTH+"");
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle("請輸入時間")
                         .setView(item)
-                        .setNegativeButton("Cancel", null)
+                        .setNegativeButton(getResources().getString(R.string.cancel), null)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
-                                final EditText edt_year = (EditText) item.findViewById(R.id.editText_year);
-                                final EditText edt_month = (EditText) item.findViewById(R.id.editText_month);
-                                edt_year.setText(CURRENT_YEAR+"");
-                                edt_month.setText(CURRENT_MONTH+"");
 
                                 int newMonth = Integer.valueOf(edt_month.getText().toString());
                                 if(newMonth < 1)
@@ -387,13 +392,14 @@ public class MainActivity extends AppCompatActivity {
                                 }else
                                     edt_month.setText(newMonth+"");
 
-                                String year = String.format("%04d",Integer.valueOf(edt_year.getText().toString()));
-                                String month = String.format("%02d",Integer.valueOf(edt_month.getText().toString()));
-                                if (year.length() == 0 || month.length() == 0)
+                                if (edt_year.getText().toString().length() == 0 || edt_month.getText().toString().length() == 0)
                                 {
                                     Toast.makeText(MainActivity.this, getResources().getString(R.string.noEmpty), Toast.LENGTH_SHORT).show();
                                     return;
                                 }
+
+                                String year = String.format("%04d",Integer.valueOf(edt_year.getText().toString()));
+                                String month = String.format("%02d",Integer.valueOf(edt_month.getText().toString()));
 
                                 String date = Item.KEY_DATE +" LIKE '" + year + "/" + month + "%'";
                                 //從資料庫抓清單
@@ -423,6 +429,7 @@ public class MainActivity extends AppCompatActivity {
         title_kind.setText(getResources().getString(R.string.title_kind));
         title_kind.setTextSize(18);
         title_kind.setTextColor(0xff882288);
+        title_kind.setBackgroundColor(0xffffcc88);
         title_kind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -456,6 +463,7 @@ public class MainActivity extends AppCompatActivity {
         title_cost.setText(getResources().getString(R.string.title_cost));
         title_cost.setTextSize(18);
         title_cost.setTextColor(0xff882288);
+        title_cost.setBackgroundColor(0xffffcc88);
 
         //顯示全部[Button]============================================================
         btn_showAll.setOnClickListener(new View.OnClickListener() {
@@ -480,15 +488,13 @@ public class MainActivity extends AppCompatActivity {
                         .setItems(R.array.actions, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                            //    String kind = getResources().getStringArray(R.array.actions)[which];
-
                                 if(which == 0){ //修改
                                     changeFlag = true; //標記以便回來時可以在onResume()更新表格
 
                                     //new一個intent物件，並指定Activity切換的class
                                     Intent intent = new Intent();
                                     intent.setClass(MainActivity.this, ChangeDataActivity.class);
-                                    intent.putExtra("id",_id);//可放所有基本類別
+                                    intent.putExtra("id",_id); //傳id值
                                     //切換Activity
                                     startActivity(intent);
                                 }
@@ -622,7 +628,7 @@ public class MainActivity extends AppCompatActivity {
         tabHost.addTab(spec);
     }
 
-    //更新預算介面(本月預算、剩餘額度)
+    //更新預算介面(本月預算、剩餘額度、評語)
     public void reloadCount(int newBudget){
         //紀錄當前的年/月(抓資料的語法)
         String monthKeyword = String.format("date LIKE '%04d/%02d%%'", CURRENT_YEAR, CURRENT_MONTH);
@@ -631,7 +637,7 @@ public class MainActivity extends AppCompatActivity {
         MONTH_BUDGET = newBudget;
         txv_count_sum.setText(newBudget+"");
 
-        //統計當月總支出
+        //統計當月總支出====================================================
         Cursor c3 = _helper.getReadableDatabase()
                 .query(Item.DATABASE_TABLE, //table
                         new String[] {Item.KEY_COST}, //columns
@@ -676,20 +682,21 @@ public class MainActivity extends AppCompatActivity {
     //更新顯示所有資料
     public void updateTable(){
         c = _helper.getReadableDatabase()
-                .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, "date");
+                .query(Item.DATABASE_TABLE, null,
+                        Item.KEY_NAME + "!= 'state' AND " + Item.KEY_NAME + "!= 'state2'", null, null, null, Item.KEY_DATE);
         adapter.changeCursor(c);
         txv_show.setText("");
     }
 
     public boolean isFirstLaunchApp(){
-        c = _helper.getReadableDatabase(). //查找有無狀態列，若無，getCount() == 0，表示第一次執行App
+        c2 = _helper.getReadableDatabase(). //查找有無狀態列，若無，getCount() == 0，表示第一次執行App
                 query(Item.DATABASE_TABLE, null, Item.KEY_NAME + " LIKE 'state'", null, null, null, null);
 
-        if (c.getCount() == 0) //第一次開啟App，新建state資料，並回傳true
+        if (c2.getCount() == 0) //第一次開啟App，回傳true
             return true;
         else {
-            c.moveToFirst();
-            MONTH_BUDGET = Integer.valueOf(c.getString(4));
+            c2.moveToFirst();
+            MONTH_BUDGET = Integer.valueOf(c2.getString(4));
             return false;
         }
     }
@@ -697,16 +704,45 @@ public class MainActivity extends AppCompatActivity {
     //更新狀態(當前年，當前月，當前預算，mode: 0 新增/1 修改)
     public void ChangeState(String year, String month, int budget, int mode){
 
-            //設定存進資料庫的容器(參數: 資料表欄名稱 / 資料值，id是主鍵會自己遞增生成，不用另外寫)
-            ContentValues values = new ContentValues();
-            values.put(Item.KEY_NAME, "state"); //VARCHAR
-            values.put(Item.KEY_DATE, year); //VARCHAR year month(YYYY/MM)
-            values.put(Item.KEY_KIND, month); //VARCHAR first (Y/N)
-            values.put(Item.KEY_COST, budget); //INTEGER budget
+        //設定存進資料庫的容器(參數: 資料表欄名稱 / 資料值，id是主鍵會自己遞增生成，不用另外寫)
+        ContentValues values = new ContentValues();
+        values.put(Item.KEY_NAME, "state"); //(1)VARCHAR
+        values.put(Item.KEY_DATE, year);     //(2)VARCHAR year (YYYY)
+        values.put(Item.KEY_KIND, month);    //(3)VARCHAR month (MM)
+        values.put(Item.KEY_COST, budget);   //(4)INTEGER budget
 
         if(mode == 0) //資料庫新增資料語法 (參數: 資料表名稱 /好像是如果第三個參數沒給值要放什麼 /要放的值)
             _helper.getWritableDatabase().insert(Item.DATABASE_TABLE, null, values);
         if(mode == 1) //資料庫更新資料語法 (參數: 資料表名稱 /要放的值 /WHERE /WhereArgs)
             _helper.getWritableDatabase().update(Item.DATABASE_TABLE, values, Item.KEY_NAME + " LIKE 'state'", null);
+    }
+
+    //顯示與更新通知時間 0:顯示 1:顯示與更新
+    public void SaveNotificationTime(int mode){
+
+        c2 = _helper.getReadableDatabase(). //查找有無狀態列，若無，getCount() == 0，表示第一次執行App
+                query(Item.DATABASE_TABLE, null, Item.KEY_NAME + " LIKE 'state2'", null, null, null, null);
+
+        //設定存進資料庫的容器(參數: 資料表欄名稱 / 資料值，id是主鍵會自己遞增生成，不用另外寫)
+        ContentValues values = new ContentValues();
+        values.put(Item.KEY_NAME, "state2"); //(1)VARCHAR
+        values.put(Item.KEY_KIND, "XD");      //(3)VARCHAR ??
+        values.put(Item.KEY_COST, 30);        //(4)INTEGER ??
+
+        if (c2.getCount() == 0) { //第一次開啟App，新建state2資料
+            values.put(Item.KEY_DATE, ""); //(2)VARCHAR minute second(MM:SS)
+            _helper.getWritableDatabase().insert(Item.DATABASE_TABLE, null, values);
+        }
+        else {
+            c2.moveToFirst();
+            if(mode == 0)
+                input_time = c2.getString(2);
+
+            btn_notify_time.setText(input_time);  //將選取結果show在按鈕上
+            if (mode == 1) {
+                values.put(Item.KEY_DATE, input_time); //(2)VARCHAR minute second(MM:SS)
+                _helper.getWritableDatabase().update(Item.DATABASE_TABLE, values, Item.KEY_NAME + " LIKE 'state2'", null);
+            }
+        }
     }
 }

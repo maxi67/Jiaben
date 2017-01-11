@@ -7,8 +7,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_margin="10dp"
+        android:layout_height="70dp"
+        android:layout_margin="2.5dp"
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
@@ -18,7 +18,7 @@
             android:layout_weight="2"
             android:textColor="#220022"
             android:text="@string/instruction"
-            android:textSize="18sp"/>
+            android:textSize="12sp"/>
         <Button
             android:id="@+id/btn_showAll"
             android:layout_width="0dp"
@@ -31,23 +31,24 @@
         android:id="@+id/txv_show"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
+        android:layout_marginTop="2.5dp"
+        android:layout_marginStart="20dp"
         android:textColor="@drawable/blue"
-        android:textSize="25sp"/>
+        android:textSize="20sp"/>
 
     <LinearLayout
         android:id="@+id/list_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20sp"
+        android:layout_margin="2.5dp"
         android:orientation="horizontal">
     </LinearLayout>
 
     <ListView
         android:id="@+id/search_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="2.5dp">
     </ListView>
 
 </LinearLayout>

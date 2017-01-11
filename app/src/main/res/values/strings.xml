@@ -29,9 +29,9 @@
     <string name="title_kind">kind</string>
     <string name="title_cost">cost</string>
     <string name="plzTypeName">Please type name of the item</string>
-    <string name="plzTypeCost">please type cost of the item</string>
+    <string name="plzTypeCost">cost of the item</string>
     <string name="save">save</string>
-    <string name="instruction">type name to search keyword, and type date to search all name of  certain month</string>
+    <string name="instruction">type name, date, and kind to search keyword, certain date and kind</string>
 
     <string name="arr1">Breakfast</string>
     <string name="arr2">Lunch</string>
@@ -45,14 +45,14 @@
     <string name="showAll">show all</string>
     <string name="noEmpty">Empty Invalid</string>
     <string name="comment">comment</string>
-    <string name="budgetOfThIsMonth">Budget of ThIs Month</string>
+    <string name="budgetOfThisMonth">Budget</string>
     <string name="dollar">dollar(s)</string>
     <string name="currentlyLeft">Currently Left</string>
     <string name="tab_expense">Expense</string>
     <string name="tab_search">Search</string>
     <string name="tab_count">Count</string>
     <string name="tab_eatWhat">Eat?</string>
-    <string name="dailyNotification">Daily Notification:</string>
+    <string name="dailyNotification">Notification:</string>
     <string name="comment_1">You still have plenty!</string>
     <string name="comment_2">Eat something good!</string>
     <string name="comment_3">Better keep an eye on how much you spend!</string>
@@ -68,4 +68,6 @@
     <string name="action2">Delete</string>
     <string name="cancel">cancel</string>
     <string name="plzTypeKeyword">Please type keyword of item name</string>
+    <string name="notSet">not set</string>
+    <string name="alreadySpent">Spent</string>
 </resources>

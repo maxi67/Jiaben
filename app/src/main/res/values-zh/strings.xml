@@ -21,7 +21,7 @@
     <string name="showAll">顯示全部</string>
     <string name="noEmpty">不能為空</string>
     <string name="comment">評語</string>
-    <string name="budgetOfThIsMonth">本月預算</string>
+    <string name="budgetOfThisMonth">本月預算</string>
     <string name="dollar">摳</string>
     <string name="currentlyLeft">目前僅存</string>
     <string name="tab_expense">支出</string>
@@ -44,4 +44,6 @@
     <string name="action1">修改</string>
     <string name="cancel">取消</string>
     <string name="plzTypeKeyword">請輸入餐點關鍵字</string>
+    <string name="notSet">未設定</string>
+    <string name="alreadySpent">已花費</string>
 </resources>
