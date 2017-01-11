@@ -163,10 +163,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(changeFlag) {
-            //Update listView
-            c = _helper.getReadableDatabase()
-                    .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, "date");
-            adapter.changeCursor(c);
+            //Update ListView
+            updateTable();
             changeFlag = false;
         }
 
@@ -185,19 +183,18 @@ public class MainActivity extends AppCompatActivity {
         //元件宣告
         LinearLayout content_view = (LinearLayout) findViewById(R.id.tab1);
         getLayoutInflater().inflate(R.layout.tab1_content, content_view, true);
-        record_spinner = (Spinner)content_view.findViewById(R.id.record_spinner);  //(kind)
-        btn_record_date = (Button)content_view.findViewById(record_date);        //(date)
+        record_spinner = (Spinner)content_view.findViewById(R.id.record_spinner); //(kind)
+        btn_record_date = (Button)content_view.findViewById(record_date); //(date)
         btn_record_save = (Button)content_view.findViewById(R.id.record_save);
         btn_notify_time = (Button)content_view.findViewById(R.id.record_notify_time);
-        record_name = (EditText)content_view.findViewById(R.id.record_name);    //(name)
-        record_$$ = (EditText)content_view.findViewById(R.id.record_$$);        //(cost)
+        record_name = (EditText)content_view.findViewById(R.id.record_name); //(name)
+        record_$$ = (EditText)content_view.findViewById(R.id.record_$$); //(cost)
 
         //=================通知時間設定============================
         btn_notify_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 myCalendar = Calendar.getInstance(); //取得當前時間，做為打開選取器的預設值
-
                 TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this, timeSetListener,
                         myCalendar.get(Calendar.HOUR_OF_DAY),
                         myCalendar.get(Calendar.MINUTE),true);
@@ -258,18 +255,15 @@ public class MainActivity extends AppCompatActivity {
                 String input_cost = record_$$.getText().toString();
                 String input_kind = getResources().getStringArray(food)[record_spinner.getSelectedItemPosition()];
 
-                //檢查資料(防止空值)
-                if(input_name.length() == 0){
+                if(input_name.length() == 0){ //檢查資料(防止空值)
                     Toast.makeText(MainActivity.this, "品項名稱不得為空", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                //檢查資料(防止空值)
-                if(input_cost.length() == 0){
+                if(input_cost.length() == 0){ //檢查資料(防止空值)
                     Toast.makeText(MainActivity.this, "金額不得為空", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                //檢查資料(防止空值)
-                if(input_date.length() == 0){
+                if(input_date.length() == 0){ //檢查資料(防止空值)
                     Toast.makeText(MainActivity.this, "未選擇日期", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -284,14 +278,12 @@ public class MainActivity extends AppCompatActivity {
                 _helper.getWritableDatabase().insert(Item.DATABASE_TABLE, null, values);
 
                 new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(getResources().getString(R.string.save_ok)) //以成功存檔
+                        .setTitle(getResources().getString(R.string.save_ok)) //成功存檔
                         .setPositiveButton(getResources().getString(R.string.ok), null)
                         .show();
 
-                //Update listView
-                c = _helper.getReadableDatabase()
-                        .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, "date");
-                adapter.changeCursor(c);
+                //Update ListView
+                updateTable();
                 reloadCount(MONTH_BUDGET);
             }
         });
@@ -330,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final View item = LayoutInflater.from(MainActivity.this).inflate(R.layout.item_view_inputketword, null);
                 new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("請輸入餐點關鍵字")
+                        .setTitle(getResources().getString(R.string.plzTypeKeyword))
                         .setView(item)
                         .setNegativeButton("Cancel", null)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -343,8 +335,8 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.makeText(MainActivity.this, getResources().getString(R.string.noEmpty), Toast.LENGTH_SHORT).show();
                                     return;
                                 }
-                                String name = Item.KEY_NAME + " LIKE '%" + search_name.getText().toString() + "%'";
 
+                                String name = Item.KEY_NAME + " LIKE '%" + search_name.getText().toString() + "%'";
                                 //從資料庫抓清單
                                 c = _helper.getReadableDatabase()
                                         .query(Item.DATABASE_TABLE, null, name, null, null, null, Item.KEY_DATE);
@@ -445,8 +437,7 @@ public class MainActivity extends AppCompatActivity {
                                 String kind = getResources().getStringArray(R.array.food)[which];
 
                                 c = _helper.getReadableDatabase()
-                                        .query(Item.DATABASE_TABLE, null,
-                                                Item.KEY_KIND + " LIKE '%" + kind + "%'",
+                                        .query(Item.DATABASE_TABLE, null, Item.KEY_KIND + " LIKE '%" + kind + "%'",
                                                 null, null, null, null);
                                 adapter.changeCursor(c);
 
@@ -470,10 +461,8 @@ public class MainActivity extends AppCompatActivity {
         btn_showAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //從資料庫抓清單
-                c = _helper.getReadableDatabase()
-                        .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, Item.KEY_DATE);
-                adapter.changeCursor(c);
+                //Update ListView
+                updateTable();
             }
         });
 
@@ -507,10 +496,8 @@ public class MainActivity extends AppCompatActivity {
                                     _helper.getReadableDatabase().delete(Item.DATABASE_TABLE, "_id=" + _id, null);
                                     Toast.makeText(MainActivity.this, "已成功刪除", Toast.LENGTH_SHORT).show();
 
-                                    //Update listView
-                                    c = _helper.getReadableDatabase()
-                                            .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, "date");
-                                    adapter.changeCursor(c);
+                                    //Update ListView
+                                    updateTable();
                                 }
                             }
                         })
@@ -684,6 +671,14 @@ public class MainActivity extends AppCompatActivity {
             }else
                 txv_count_word.setText(getResources().getString(R.string.comment_9));
         }
+    }
+
+    //更新顯示所有資料
+    public void updateTable(){
+        c = _helper.getReadableDatabase()
+                .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, "date");
+        adapter.changeCursor(c);
+        txv_show.setText("");
     }
 
     public boolean isFirstLaunchApp(){

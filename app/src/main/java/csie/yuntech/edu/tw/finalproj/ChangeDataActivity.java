@@ -23,7 +23,7 @@ public class ChangeDataActivity extends AppCompatActivity {
     private DBHelper myHelper;
     private Cursor c;
     Spinner change_spinner;
-    Button btn_date, btn_save;
+    Button btn_date, btn_save, btn_cancel;
     EditText change_name, change_cost;
     Calendar myCalendar;
     DatePickerDialog.OnDateSetListener dateSetListener;
@@ -38,8 +38,6 @@ public class ChangeDataActivity extends AppCompatActivity {
         //取得傳遞過來的id(要修改的資料)
         Intent intent = ChangeDataActivity.this.getIntent();
         final int _id = intent.getIntExtra("id", 0);
-     //   Toast.makeText(ChangeDataActivity.this, _id+"", Toast.LENGTH_SHORT).show();
-
 
         myHelper = DBHelper.getInstance(this); //資料庫物件初始化
         myCalendar = Calendar.getInstance();  //取得手機當前日期
@@ -47,6 +45,7 @@ public class ChangeDataActivity extends AppCompatActivity {
         change_spinner = (Spinner)findViewById(R.id.change_spinner);  //(kind)
         btn_date = (Button)findViewById(R.id.change_date); //(date)
         btn_save = (Button)findViewById(R.id.change_save);
+        btn_cancel= (Button)findViewById(R.id.change_cancel);
         change_name = (EditText)findViewById(R.id.change_name); //(name)
         change_cost = (EditText)findViewById(R.id.change_cost); //(cost)
 
@@ -60,7 +59,6 @@ public class ChangeDataActivity extends AppCompatActivity {
         //設定初值=================================================================
         c = myHelper.getReadableDatabase()
                 .query(Item.DATABASE_TABLE, null, Item.KEY_ID + "= " + _id, null, null, null, null);
-//        Toast.makeText(ChangeDataActivity.this, c.getCount()+"", Toast.LENGTH_SHORT).show();
         if(c != null)
         {
             c.moveToFirst();
@@ -99,8 +97,6 @@ public class ChangeDataActivity extends AppCompatActivity {
         };
         //=============================================================
 
-
-
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,18 +105,15 @@ public class ChangeDataActivity extends AppCompatActivity {
                 String input_cost = change_cost.getText().toString();
                 String input_kind = getResources().getStringArray(food)[change_spinner.getSelectedItemPosition()];
 
-                //檢查資料(防止空值)
-                if(input_name.length() == 0){
+                if(input_name.length() == 0){ //檢查資料(防止空值)
                     Toast.makeText(ChangeDataActivity.this, "品項名稱不得為空", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                //檢查資料(防止空值)
-                if(input_cost.length() == 0){
+                if(input_cost.length() == 0){ //檢查資料(防止空值)
                     Toast.makeText(ChangeDataActivity.this, "金額不得為空", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                //檢查資料(防止空值)
-                if(input_date.length() == 0){
+                if(input_date.length() == 0){ //檢查資料(防止空值)
                     Toast.makeText(ChangeDataActivity.this, "未選擇日期", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -134,12 +127,15 @@ public class ChangeDataActivity extends AppCompatActivity {
                 values.put(Item.KEY_COST, input_cost);
                 myHelper.getWritableDatabase().update(Item.DATABASE_TABLE, values, Item.KEY_ID + "=" + _id, null);
 
-                ChangeDataActivity.this.finish();
-//                //Update listView
-//
-//                adapter.changeCursor(c);
+                ChangeDataActivity.this.finish(); //返回原Activity
             }
         });
 
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChangeDataActivity.this.finish(); //返回原Activity
+            }
+        });
     }
 }

@@ -16,7 +16,7 @@
     <string name="plzTypeName">請輸入品項的名稱</string>
     <string name="plzTypeCost">請輸入品項的金額</string>
     <string name="save">儲存</string>
-    <string name="instruction">說明:\n點擊品項搜尋關鍵字\n或時間搜尋特定月份</string>
+    <string name="instruction">說明:\n點擊品項、時間、種類搜尋關鍵字、月份、餐點類型，對資料長按可以修改或刪除</string>
     <string name="arr6">所有類型</string>
     <string name="showAll">顯示全部</string>
     <string name="noEmpty">不能為空</string>
@@ -42,4 +42,6 @@
     <string name="ok">ok</string>
     <string name="action2">刪除</string>
     <string name="action1">修改</string>
+    <string name="cancel">取消</string>
+    <string name="plzTypeKeyword">請輸入餐點關鍵字</string>
 </resources>

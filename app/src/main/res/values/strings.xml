@@ -66,4 +66,6 @@
     <string name="ok">ok</string>
     <string name="action1">Change</string>
     <string name="action2">Delete</string>
+    <string name="cancel">cancel</string>
+    <string name="plzTypeKeyword">Please type keyword of item name</string>
 </resources>
