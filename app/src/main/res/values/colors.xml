@@ -13,5 +13,5 @@
     <drawable name="lightGray">#d3d3d3</drawable>
     <drawable name="lightYellow">#ffffa5</drawable>
     <drawable name="lightPurple">#aa77cc</drawable>
-
+    <drawable name="darkRed">#881111</drawable>
 </resources>

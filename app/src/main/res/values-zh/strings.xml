@@ -39,4 +39,7 @@
     <string name="comment_8">土好吃嗎?</string>
     <string name="comment_9">土山土海~~快吃吧!</string>
     <string name="save_ok">已成功存檔</string>
+    <string name="ok">ok</string>
+    <string name="action2">刪除</string>
+    <string name="action1">修改</string>
 </resources>

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Eating King</string>
-    <string-array name = "food_random">
+    <string-array name="food_random">
         <item>@string/arr1</item>
         <item>@string/arr2</item>
         <item>@string/arr3</item>
@@ -9,13 +9,19 @@
         <item>@string/arr6</item>
     </string-array>
 
-    <string-array name = "food">
+    <string-array name="food">
         <item>@string/arr1</item>
         <item>@string/arr2</item>
         <item>@string/arr3</item>
         <item>@string/arr4</item>
         <item>@string/arr5</item>
     </string-array>
+
+    <string-array name="actions">
+        <item>@string/action1</item>
+        <item>@string/action2</item>
+    </string-array>
+
 
     <string name="welcomeToApp">welcome to Eating King</string>
     <string name="title_name">name</string>
@@ -33,6 +39,8 @@
     <string name="arr4">Dessert</string>
     <string name="arr5">Midnight Snack</string>
     <string name="arr6">All kinds</string>
+
+
     <string name="notify">It is time to keep your expenses on record!</string>
     <string name="showAll">show all</string>
     <string name="noEmpty">Empty Invalid</string>
@@ -55,4 +63,7 @@
     <string name="comment_8">Is dust delicious?</string>
     <string name="comment_9">All you see is dust!</string>
     <string name="save_ok">Saved Successfully.</string>
+    <string name="ok">ok</string>
+    <string name="action1">Change</string>
+    <string name="action2">Delete</string>
 </resources>

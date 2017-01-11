@@ -50,8 +50,7 @@
             android:layout_weight="5"
             android:textColor="@drawable/purple"
             android:textSize="28sp"
-            android:gravity="center"
-            android:text="1500"/>
+            android:gravity="center"/>
         <TextView
             android:id="@+id/cost_sum"
             android:layout_width="0dp"
@@ -59,8 +58,7 @@
             android:layout_weight="5"
             android:gravity="center"
             android:textColor="#333322"
-            android:textSize="28sp"
-            android:text="500"/>
+            android:textSize="28sp" />
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -83,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:text="(離月底還有"/>
+            android:text="(離月底還有 "/>
         <TextView
             android:id="@+id/count_daysLeft"
             android:layout_width="wrap_content"
@@ -94,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:text="天)"/>
+            android:text=" 天)"/>
     </LinearLayout>
 
     <LinearLayout

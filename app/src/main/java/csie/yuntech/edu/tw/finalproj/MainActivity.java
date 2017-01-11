@@ -1,4 +1,5 @@
 package csie.yuntech.edu.tw.finalproj;
+//2017-01-11 11:58
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private SimpleCursorAdapter adapter;
 
     //Variables
-    private boolean firstTime;
+    private boolean firstTime, changeFlag = false; //第一次執行App/ 跑去修改資料
     public int CURRENT_YEAR; //當年
     public int CURRENT_MONTH; //當月(1 ~ 12)
     public int MONTH_BUDGET; //預設預算
@@ -97,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //==================================
-
     }
 
     @Override
@@ -161,6 +161,15 @@ public class MainActivity extends AppCompatActivity {
             }else
                 reloadCount(MONTH_BUDGET);
         }
+
+        if(changeFlag) {
+            //Update listView
+            c = _helper.getReadableDatabase()
+                    .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, "date");
+            adapter.changeCursor(c);
+            changeFlag = false;
+        }
+
     }
 
     private void setAlarm(Calendar target){
@@ -188,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 myCalendar = Calendar.getInstance(); //取得當前時間，做為打開選取器的預設值
+
                 TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this, timeSetListener,
                         myCalendar.get(Calendar.HOUR_OF_DAY),
                         myCalendar.get(Calendar.MINUTE),true);
@@ -202,9 +212,9 @@ public class MainActivity extends AppCompatActivity {
                 notifc.set(Calendar.MINUTE, minute);
                 notifc.set(Calendar.SECOND, 0);
                 myCalendar = Calendar.getInstance();
-                if(notifc.compareTo(myCalendar) <= 0){
+                if(notifc.compareTo(myCalendar) <= 0){ //兩物件相同得0，不同得開始不同位元之ASCII前-後值(<=0 表示鬧鐘[時:分]晚於或相同於現在)
                     int day = notifc.get(Calendar.DAY_OF_MONTH);
-                    notifc.set(Calendar.DAY_OF_MONTH, day + 1);
+                    notifc.set(Calendar.DAY_OF_MONTH, day + 1); //隔天開始同時間才會叫
                 }
                 btn_notify_time.setText(String.format("%02d:%02d", hour, minute));  //將選取結果show在按鈕上
                 setAlarm(notifc);
@@ -233,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
         dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
-                input_date = String.format("%04d/%02d/%02d", year, monthOfYear + 1,dayOfMonth);
+                input_date = String.format("%04d/%02d/%02d", year, monthOfYear + 1, dayOfMonth);
                 btn_record_date.setText(input_date); //將選取結果show在按鈕上
             }
         };
@@ -274,8 +284,8 @@ public class MainActivity extends AppCompatActivity {
                 _helper.getWritableDatabase().insert(Item.DATABASE_TABLE, null, values);
 
                 new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(getResources().getString(R.string.save_ok))
-                        .setPositiveButton("OK", null)
+                        .setTitle(getResources().getString(R.string.save_ok)) //以成功存檔
+                        .setPositiveButton(getResources().getString(R.string.ok), null)
                         .show();
 
                 //Update listView
@@ -294,8 +304,19 @@ public class MainActivity extends AppCompatActivity {
         getLayoutInflater().inflate(R.layout.tab2_content, content_view, true);
         btn_showAll = (Button)content_view.findViewById(R.id.btn_showAll);
         txv_show = (TextView)content_view.findViewById(R.id.txv_show);
+        //初始化清單[ListView] ==============================================
+        search_list = (ListView)content_view.findViewById(R.id.search_list);
 
-        //插入標題列
+        c = _helper.getReadableDatabase() //從資料庫抓清單
+                .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, Item.KEY_DATE);
+        adapter = new SimpleCursorAdapter(this,
+                R.layout.list_style, c,
+                new String[]{Item.KEY_NAME, Item.KEY_DATE, Item.KEY_KIND, Item.KEY_COST},
+                new int[]{R.id.item_name, R.id.item_date, R.id.item_kind, R.id.item_cost}, 1);
+        search_list.setAdapter(adapter);
+        //=============================================================
+
+        //插入標題列===================================================
         LinearLayout content_view2 = (LinearLayout)content_view.findViewById(R.id.list_title);
         getLayoutInflater().inflate(R.layout.list_style, content_view2, true);
         View item_view = content_view2.getChildAt(0);
@@ -420,16 +441,17 @@ public class MainActivity extends AppCompatActivity {
                         .setItems(food, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                //取array單項內容
                                 String kind = getResources().getStringArray(R.array.food)[which];
 
-                                c2 = _helper.getReadableDatabase()
+                                c = _helper.getReadableDatabase()
                                         .query(Item.DATABASE_TABLE, null,
                                                 Item.KEY_KIND + " LIKE '%" + kind + "%'",
                                                 null, null, null, null);
-                                adapter.changeCursor(c2);
+                                adapter.changeCursor(c);
 
-                                if(c2 != null) {
-                                    String show = "總共" + c2.getCount() + "份"+ kind;
+                                if(c != null) {
+                                    String show = "總共" + c.getCount() + "份"+ kind;
                                     txv_show.setText(show);
                                 }
                             }
@@ -443,17 +465,6 @@ public class MainActivity extends AppCompatActivity {
         title_cost.setText(getResources().getString(R.string.title_cost));
         title_cost.setTextSize(18);
         title_cost.setTextColor(0xff882288);
-
-        search_list = (ListView)content_view.findViewById(R.id.search_list);
-
-        //從資料庫抓清單
-        c = _helper.getReadableDatabase()
-                .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, Item.KEY_DATE);
-        adapter = new SimpleCursorAdapter(this,
-                R.layout.list_style, c,
-                new String[]{Item.KEY_NAME, Item.KEY_DATE, Item.KEY_KIND, Item.KEY_COST},
-                new int[]{R.id.item_name, R.id.item_date, R.id.item_kind, R.id.item_cost}, 1);
-        search_list.setAdapter(adapter);
 
         //顯示全部[Button]============================================================
         btn_showAll.setOnClickListener(new View.OnClickListener() {
@@ -475,19 +486,32 @@ public class MainActivity extends AppCompatActivity {
                 final int _id = c.getInt(0);
 
                 new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("提醒") //對話框標題
-                        .setMessage("你確定要刪除嗎?") //對話框內容
+                        .setTitle("請選擇動作") //對話框標題
                         .setNegativeButton("Cancel", null) //按下按鈕的動作，null表示沒動作
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        .setItems(R.array.actions, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                _helper.getReadableDatabase().delete(Item.DATABASE_TABLE, "_id=" + _id, null);
-                                Toast.makeText(MainActivity.this, "已成功刪除", Toast.LENGTH_SHORT).show();
+                            //    String kind = getResources().getStringArray(R.array.actions)[which];
 
-                                //Update listView
-                                c = _helper.getReadableDatabase()
-                                        .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, "date");
-                                adapter.changeCursor(c);
+                                if(which == 0){ //修改
+                                    changeFlag = true; //標記以便回來時可以在onResume()更新表格
+
+                                    //new一個intent物件，並指定Activity切換的class
+                                    Intent intent = new Intent();
+                                    intent.setClass(MainActivity.this, ChangeDataActivity.class);
+                                    intent.putExtra("id",_id);//可放所有基本類別
+                                    //切換Activity
+                                    startActivity(intent);
+                                }
+                                else if(which == 1){ //刪除
+                                    _helper.getReadableDatabase().delete(Item.DATABASE_TABLE, "_id=" + _id, null);
+                                    Toast.makeText(MainActivity.this, "已成功刪除", Toast.LENGTH_SHORT).show();
+
+                                    //Update listView
+                                    c = _helper.getReadableDatabase()
+                                            .query(Item.DATABASE_TABLE, null, Item.KEY_NAME + "!= 'state'", null, null, null, "date");
+                                    adapter.changeCursor(c);
+                                }
                             }
                         })
                         .setCancelable(false) //不可以點對話框以外區域取消
@@ -516,7 +540,7 @@ public class MainActivity extends AppCompatActivity {
                         .setTitle("請輸入本月預算")
                         .setView(item)
                         .setNegativeButton("Cancel", null)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 EditText editText = (EditText) item.findViewById(R.id.edt_input);
@@ -526,7 +550,7 @@ public class MainActivity extends AppCompatActivity {
                                     return;
                                 }
                                 reloadCount(Integer.valueOf(editText.getText().toString()));
-                                ChangeState(CURRENT_YEAR + "", CURRENT_MONTH + "", MONTH_BUDGET, 0);
+                                ChangeState(CURRENT_YEAR + "", CURRENT_MONTH + "", MONTH_BUDGET, 1);
                             }
                         })
                         .show();
@@ -688,6 +712,6 @@ public class MainActivity extends AppCompatActivity {
         if(mode == 0) //資料庫新增資料語法 (參數: 資料表名稱 /好像是如果第三個參數沒給值要放什麼 /要放的值)
             _helper.getWritableDatabase().insert(Item.DATABASE_TABLE, null, values);
         if(mode == 1) //資料庫更新資料語法 (參數: 資料表名稱 /要放的值 /WHERE /WhereArgs)
-            _helper.getWritableDatabase().update(Item.DATABASE_TABLE, values, Item.KEY_ID + "= 1", null);
+            _helper.getWritableDatabase().update(Item.DATABASE_TABLE, values, Item.KEY_NAME + " LIKE 'state'", null);
     }
 }
