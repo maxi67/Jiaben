@@ -19,4 +19,24 @@
     <string name="instruction">說明:\n點擊品項搜尋關鍵字\n或時間搜尋特定月份</string>
     <string name="arr6">所有類型</string>
     <string name="showAll">顯示全部</string>
+    <string name="noEmpty">不能為空</string>
+    <string name="comment">評語</string>
+    <string name="budgetOfThIsMonth">本月預算</string>
+    <string name="dollar">摳</string>
+    <string name="currentlyLeft">目前僅存</string>
+    <string name="tab_expense">支出</string>
+    <string name="tab_search">查詢</string>
+    <string name="tab_count">統計</string>
+    <string name="tab_eatWhat">吃啥</string>
+    <string name="dailyNotification">每日提醒:</string>
+    <string name="comment_1">有錢能使鬼推磨！</string>
+    <string name="comment_2">該適時犒賞自己一下！</string>
+    <string name="comment_3">今日宜開源節流</string>
+    <string name="comment_4">繼續保持</string>
+    <string name="comment_5">快吃土啦！</string>
+    <string name="comment_6">這樣不行哦！</string>
+    <string name="comment_7">這個月要吃土啦！</string>
+    <string name="comment_8">土好吃嗎?</string>
+    <string name="comment_9">土山土海~~快吃吧!</string>
+    <string name="save_ok">已成功存檔</string>
 </resources>

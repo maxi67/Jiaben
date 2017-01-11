@@ -35,4 +35,24 @@
     <string name="arr6">All kinds</string>
     <string name="notify">It is time to keep your expenses on record!</string>
     <string name="showAll">show all</string>
+    <string name="noEmpty">Empty Invalid</string>
+    <string name="comment">comment</string>
+    <string name="budgetOfThIsMonth">Budget of ThIs Month</string>
+    <string name="dollar">dollar(s)</string>
+    <string name="currentlyLeft">Currently Left</string>
+    <string name="tab_expense">Expense</string>
+    <string name="tab_search">Search</string>
+    <string name="tab_count">Count</string>
+    <string name="tab_eatWhat">Eat?</string>
+    <string name="dailyNotification">Daily Notification:</string>
+    <string name="comment_1">You still have plenty!</string>
+    <string name="comment_2">Eat something good!</string>
+    <string name="comment_3">Better keep an eye on how much you spend!</string>
+    <string name="comment_4">Keep up your good work!</string>
+    <string name="comment_5">You are about to eat dust!!</string>
+    <string name="comment_6">Warning!!</string>
+    <string name="comment_7">You are spending too much!!</string>
+    <string name="comment_8">Is dust delicious?</string>
+    <string name="comment_9">All you see is dust!</string>
+    <string name="save_ok">Saved Successfully.</string>
 </resources>

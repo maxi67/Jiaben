@@ -8,17 +8,24 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:text="統計開銷"
         android:textSize="28sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
         <TextView
-            android:padding="20dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="本月預算"
+            android:text="@string/budgetOfThIsMonth"
+            android:layout_weight="1"
+            android:textSize="24sp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="/已花費"
             android:layout_weight="1"
             android:textSize="24sp"/>
         <Button
@@ -31,20 +38,34 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_gravity="center">
+        android:gravity="center">
+
         <TextView
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
             android:id="@+id/count_sum"
-            android:textColor="@drawable/purple"
-            android:textSize="28sp"/>
-        <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="摳"
+            android:layout_weight="5"
+            android:textColor="@drawable/purple"
+            android:textSize="28sp"
+            android:gravity="center"
+            android:text="1500"/>
+        <TextView
+            android:id="@+id/cost_sum"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:gravity="center"
+            android:textColor="#333322"
+            android:textSize="28sp"
+            android:text="500"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="@string/dollar"
             android:textSize="28sp"/>
     </LinearLayout>
 
@@ -56,7 +77,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="20dp"
-            android:text="目前剩下"
+            android:text="@string/currentlyLeft"
             android:textSize="24sp"/>
         <TextView
             android:layout_width="wrap_content"
@@ -88,24 +109,26 @@
             android:layout_height="wrap_content"
             android:textColor="@drawable/blue"
             android:textSize="28sp"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="摳"
-            android:textSize="28sp"/>
+            android:text="@string/dollar"
+            android:textSize="28sp"
+            android:id="@+id/textView" />
 
     </LinearLayout>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="20dp"
-        android:text="評語"
+        android:text="@string/comment"
         android:textSize="24sp"/>
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/count_word"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:textSize="28sp"/>
-
+        android:textColor="#554433"
+        android:textSize="25sp"/>
 </LinearLayout>
