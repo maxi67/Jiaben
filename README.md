@@ -8,4 +8,4 @@
 
 系統流程圖
 ---
-<img src="screenshots/Flow.png" height="400"/>
+<img src="pic/Flow.png" height="400"/>
