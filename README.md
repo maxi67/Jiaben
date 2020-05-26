@@ -9,3 +9,11 @@
 系統流程圖
 ---
 <img src="pic/Flow.png" height="400"/>
+
+App統計畫面
+---
+<img src="pic/Jia_Data.png" height="400"/> <img src="pic/Jia_Cnt.png" height="400"/> 
+
+問問神奇海螺
+---
+<img src="pic/Jia_Guess1.png" height="400"/> <img src="pic/Jia_Guess2.png" height="400"/> 
