@@ -4,7 +4,7 @@
 - 開發語言: Android
 - 開發平台: Android Studio
 - 應用: `TabHost`, `SQLite`, `Notification`
-- 功能簡報: https://hackmd.io/@RMR6xkGdREOIMup5u-mJ8A/Bkqe1VW58?type=slide#/
+- 功能簡報: https://hackmd.io/@maxi67/Bkqe1VW58#/
 
 系統流程圖
 ---
